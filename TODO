@@ -1,0 +1,14 @@
+A line starting with * is complete task.
+A line with no prefix is an incomplete task.
+
+design
+tests
+decide on CORBA/web
+assign roles
+active replication
+high availability
+fault tolerance
+front end
+sequencer (total order)
+reliable multicast
+replica manager
