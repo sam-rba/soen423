@@ -1,0 +1,47 @@
+// Sequencer based on "Distributed Systems: Concepts and Design" 5e, Coulouris et
+// al. (2012) pp. 654-655. Depends on reliable multicast, implemented here as the
+// Trans protocol.
+
+type dataMsg struct {
+	id int
+	data
+}
+
+type orderMsg struct {
+	id int
+	seq int
+}
+
+class groupMember {
+	seq := 0
+	holdback := new Queue[dataMsg]
+	deliver := new Queue[dataMsg]
+	rMulticast := new Trans
+
+	multicast(m dataMsg) {
+		rMulticast.send(m)
+	}
+
+	on rMulticast.recv(m dataMsg) {
+		holdback.enqueue(m)
+	}
+
+	on rMulticast.recv(m orderMsg) {
+		wait until m.id in holdback && seq == m.seq
+		data := delete(m.id, holdback)
+		deliver.enqueue(data)
+		seq++
+	}
+}
+
+// Sequencer is also a member of the multicast group.
+class sequencer {
+	seq := 0
+	rMulticast := new  Trans
+
+	on rMulticast.recv(m dataMsg) {
+		order := orderMsg{m.id, seq}
+		rMulticast.send(order)
+		seq++
+	}
+}
