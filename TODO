@@ -1,13 +1,13 @@
-A line starting with * is complete task.
+A line starting with * is a complete task.
 A line with no prefix is an incomplete task.
 
 * dataflow diagram
+* inter-city dataflow diagram
 
 design
 tests
 decide on CORBA/web
 finalize client<->FE comm in dataflow diagram (CORBA/web)
-inter-city dataflow diagram
 assign roles
 active replication
 high availability
