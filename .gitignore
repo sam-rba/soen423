@@ -1,1 +1,7 @@
 *.fig.bak
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.run.xml
