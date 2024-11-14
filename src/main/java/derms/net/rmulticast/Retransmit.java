@@ -1,10 +1,10 @@
 package derms.net.rmulticast;
 
+import derms.net.ConcurrentMulticastSocket;
 import derms.net.Packet;
 
 import java.io.Serializable;
 import java.net.DatagramPacket;
-import java.net.MulticastSocket;
 import java.net.SocketAddress;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
@@ -12,11 +12,11 @@ import java.util.logging.Logger;
 /** Retransmit dropped messages. */
 class Retransmit<T extends Serializable & Hashable> implements Runnable {
     private final BlockingQueue<Message<T>> retransmissions;
-    private final MulticastSocket outSock;
+    private final ConcurrentMulticastSocket outSock;
     private final SocketAddress group;
     private final Logger log;
 
-    Retransmit(BlockingQueue<Message<T>> retransmissions, MulticastSocket outSock, SocketAddress group) {
+    Retransmit(BlockingQueue<Message<T>> retransmissions, ConcurrentMulticastSocket outSock, SocketAddress group) {
         this.retransmissions = retransmissions;
         this.outSock = outSock;
         this.group = group;
@@ -30,9 +30,7 @@ class Retransmit<T extends Serializable & Hashable> implements Runnable {
                 Message<T> msg = retransmissions.take();
                 try {
                     DatagramPacket pkt = Packet.encode(msg, group);
-                    synchronized (outSock) {
-                        outSock.send(pkt);
-                    }
+                    outSock.send(pkt);
                 } catch (Exception e) {
                     log.warning(e.getMessage());
                 }
