@@ -66,7 +66,7 @@ recv(m) {
 	}
 
 	acks := union(positiveAcks, negativeAcks)
-	for each ack in acks s.t. sender(ack) == sender(m) && m.seq > ack.seq+1 {
+	if t.e. ack in acks s.t. sender(ack) == sender(m) && m.seq > ack.seq+1 {
 		insert(m.id, negativeAcks)
 	}
 }
@@ -79,10 +79,6 @@ retransmit() {
 		m := received[mid]
 		send(m)
 	}
-}
-
-prune() {
-	// TODO: use Observable Predicate for Delivery
 }
 
 // Observable Predicate for Delivery.
@@ -106,4 +102,39 @@ OPD(a, c m) bool {
 			assert OPD(a, c)
 		}
 	}
+}
+
+// Extend seq to include A.
+OPDseq(seq []m, A m) ok {
+	if A in seq {
+		return true
+	}
+
+	// C -> ... -> B -> ... ?-> A
+	C := first(seq)
+	B := last(seq)
+
+	sent := all m in received s.t. m.sender == B && m not in seq
+	potentialPredecessors := sent + B.positiveAcks - C.negativeAcks
+
+	for each m in potentialPredecessors {
+		if OPDseq(append(seq, m), A) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// Free memory from the received list.
+prune() {
+	A := oldest(received)
+	for all q in group {
+		C := most recent m in received s.t. m.sender == q
+		if !OPDseq(m[]{C}, A) { // q has not received A
+			return
+		}
+	}
+	// All processes have received A.
+	delete(A, received)
 }
