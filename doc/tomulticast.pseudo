@@ -1,0 +1,35 @@
+type message struct {
+	seq int
+	payload
+}
+
+class sequencer {
+	var seq = 0
+
+	// Receive a request from the FE.
+	// Attach sequence number and multicast to RMs.
+	on rUnicastReceive(payload) {
+		rMulticastSend(message{seq, payload})
+		seq++
+	}
+}
+
+class receiver {
+	var seq = 0
+	var holdback Queue[message]
+
+	// Receive from sequencer.
+	on rMulticastReceive(m message) {
+		append(holdback, m)
+		trydeliver()
+	}
+
+	trydeliver() {
+		if t.e. m in holdback s.t. m.seq == seq+1 {
+			remove(m, holdback)
+			deliver(m)
+			seq++
+			trydeliver()
+		}
+	}
+}
