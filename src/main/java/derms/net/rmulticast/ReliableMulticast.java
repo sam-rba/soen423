@@ -48,7 +48,7 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
         this.log = Logger.getLogger(this.getClass().getName());
 
         (new Thread(new Receive())).start();
-        (new Thread(new Retransmit())).start();
+        (new Thread(new Retransmit(retransmissions, outSock, group))).start();
     }
 
     public void send(T payload) throws IOException {
@@ -70,34 +70,6 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
         @Override
         public void run() {
             // TODO
-        }
-    }
-
-    /** Retransmit dropped messages. */
-    private class Retransmit implements Runnable {
-        private final Logger log;
-
-        private Retransmit() {
-            this.log = Logger.getLogger(this.getClass().getName());
-        }
-
-        @Override
-        public void run() {
-            try {
-                for (;;) {
-                    Message<T> msg = retransmissions.take();
-                    try {
-                        DatagramPacket pkt = Packet.encode(msg, group);
-                        synchronized (outSock) {
-                            outSock.send(pkt);
-                        }
-                    } catch (Exception e) {
-                        log.warning(e.getMessage());
-                    }
-                }
-            } catch (InterruptedException e) {
-                log.info("Retransmit thread interrupted: "+e.getMessage());
-            }
         }
     }
 
