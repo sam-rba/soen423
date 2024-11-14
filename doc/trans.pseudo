@@ -6,7 +6,6 @@
 type m struct {
 	id mid
 	sender pid
-	seq int // sequence number
 	positiveAcks []mid
 	negativeAcks []mid
 	data
@@ -63,11 +62,6 @@ recv(m) {
 		} else {
 			insert(mid, negativeAcks)
 		}
-	}
-
-	acks := union(positiveAcks, negativeAcks)
-	if t.e. ack in acks s.t. sender(ack) == sender(m) && m.seq > ack.seq+1 {
-		insert(m.id, negativeAcks)
 	}
 }
 
