@@ -1,10 +1,11 @@
-package derms.net.rmulticast;
+package derms.util;
 
 import java.time.Duration;
 import java.time.Instant;
 
-class Wait {
-    static void forDuration(Duration dur) throws InterruptedException {
+public class Wait {
+    /** Yield the thread for the specified duration. */
+    public static void forDuration(Duration dur) throws InterruptedException {
         Instant start = Instant.now();
         Duration elapsed;
         do {

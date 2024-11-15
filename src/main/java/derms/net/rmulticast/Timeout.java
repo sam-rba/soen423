@@ -1,5 +1,7 @@
 package derms.net.rmulticast;
 
+import derms.util.Wait;
+
 import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;

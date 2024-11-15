@@ -2,6 +2,7 @@ package derms.net.rmulticast;
 
 import derms.net.ConcurrentMulticastSocket;
 import derms.net.Packet;
+import derms.util.Wait;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
