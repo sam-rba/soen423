@@ -23,11 +23,11 @@ class Receive<T extends Serializable & Hashable> implements Runnable {
     private final BlockingQueue<Message<T>> delivered;
     private final Logger log;
 
-    Receive(ConcurrentMulticastSocket inSock, Set<MessageID> positiveAcks, Set<MessageID> negativeAcks, BlockingQueue<Message<T>> retransmissions, Set<InetAddress> groupMembers, BlockingQueue<Message<T>> delivered) {
+    Receive(ConcurrentMulticastSocket inSock, Set<MessageID> positiveAcks, Set<MessageID> negativeAcks, ReceivedSet<T> received, BlockingQueue<Message<T>> retransmissions, Set<InetAddress> groupMembers, BlockingQueue<Message<T>> delivered) {
         this.inSock = inSock;
         this.positiveAcks = positiveAcks;
         this.negativeAcks = negativeAcks;
-        this.received = new ReceivedSet<T>();
+        this.received = received;
         this.retransmissions = retransmissions;
         this.groupMembers = groupMembers;
         this.delivered = delivered;

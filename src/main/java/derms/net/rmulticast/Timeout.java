@@ -27,7 +27,7 @@ class Timeout<T extends Serializable & Hashable> implements Runnable {
     public void run() {
         try {
             for (;;) {
-                waitUntilTimeout();
+                Wait.forDuration(timeout);
                 if (positiveAcks.contains(msg.id())) {
                     log.info("Message " + msg.id() + "positively ack'ed.");
                     return;
@@ -39,14 +39,5 @@ class Timeout<T extends Serializable & Hashable> implements Runnable {
         } catch (InterruptedException e) {
             log.info("Timeout thread interrupted: " + e.getMessage());
         }
-    }
-
-    private void waitUntilTimeout() {
-        Instant start = Instant.now();
-        Duration elapsed;
-        do {
-            Thread.yield();
-            elapsed = Duration.between(start, Instant.now());
-        } while (elapsed.compareTo(timeout) < 0);
     }
 }
