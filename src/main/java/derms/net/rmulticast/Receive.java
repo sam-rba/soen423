@@ -6,6 +6,7 @@ import derms.net.Packet;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
@@ -18,15 +19,17 @@ class Receive<T extends Serializable & Hashable> implements Runnable {
     private final Set<MessageID> negativeAcks;
     private final ReceivedSet<T> received;
     private final BlockingQueue<Message<T>> retransmissions;
+    private final Set<InetAddress> groupMembers;
     private final BlockingQueue<Message<T>> delivered;
     private final Logger log;
 
-    Receive(ConcurrentMulticastSocket inSock, Set<MessageID> positiveAcks, Set<MessageID> negativeAcks, BlockingQueue<Message<T>> retransmissions, BlockingQueue<Message<T>> delivered) {
+    Receive(ConcurrentMulticastSocket inSock, Set<MessageID> positiveAcks, Set<MessageID> negativeAcks, BlockingQueue<Message<T>> retransmissions, Set<InetAddress> groupMembers, BlockingQueue<Message<T>> delivered) {
         this.inSock = inSock;
         this.positiveAcks = positiveAcks;
         this.negativeAcks = negativeAcks;
         this.received = new ReceivedSet<T>();
         this.retransmissions = retransmissions;
+        this.groupMembers = groupMembers;
         this.delivered = delivered;
         this.log = Logger.getLogger(this.getClass().getName());
     }
@@ -50,6 +53,8 @@ class Receive<T extends Serializable & Hashable> implements Runnable {
         positiveAcks.add(msg.id());
         received.add(msg);
         delivered.add(msg);
+
+        groupMembers.add(msg.sender);
 
         negativeAcks.remove(msg.id());
         retransmissions.remove(msg);

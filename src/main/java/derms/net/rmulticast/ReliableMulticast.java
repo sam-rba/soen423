@@ -16,28 +16,30 @@ import java.util.logging.Logger;
 
 /** TODO */
 public class ReliableMulticast<T extends Serializable & Hashable> {
+    private final SocketAddress group;
+    private final InetAddress laddr; // Local address.
     private final Set<MessageID> positiveAcks; // Positively acknowledged messages.
     private final Set<MessageID> negativeAcks; // Negatively acknowledged messages.
     private final BlockingQueue<Message<T>> retransmissions; // Messages pending retransmission.
     private final AtomicReference<Instant> lastSend;
-    private final SocketAddress group;
     private final ConcurrentMulticastSocket outSock;
-    private final InetAddress laddr; // Local address.
+    private final Set<InetAddress> groupMembers;
     private final BlockingQueue<Message<T>> delivered;
     private final Logger log;
 
     public ReliableMulticast(InetSocketAddress group, InetAddress laddr) throws IOException {
+        this.group = group;
+        this.laddr = laddr;
+
         this.positiveAcks = new ConcurrentHashMap<MessageID, Void>().keySet();
         this.negativeAcks = new ConcurrentHashMap<MessageID, Void>().keySet();
         this.retransmissions = new LinkedBlockingQueue<Message<T>>();
         this.lastSend = new AtomicReference<Instant>(Instant.now());
 
-        this.group = group;
-
         this.outSock = new ConcurrentMulticastSocket(group.getPort());
         this.outSock.joinGroup(group.getAddress());
 
-        this.laddr = laddr;
+        this.groupMembers = new ConcurrentHashMap<InetAddress, Void>().keySet();
 
         this.delivered = new LinkedBlockingQueue<Message<T>>();
 
@@ -45,7 +47,7 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
 
         ConcurrentMulticastSocket inSock = new ConcurrentMulticastSocket();
         inSock.joinGroup(group.getAddress());
-        (new Thread(new Receive<T>(inSock, positiveAcks, negativeAcks, retransmissions, delivered))).start();
+        (new Thread(new Receive<T>(inSock, positiveAcks, negativeAcks, retransmissions, groupMembers, delivered))).start();
 
         (new Thread(new Retransmit<T>(retransmissions, outSock, group))).start();
     }
