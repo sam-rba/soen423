@@ -5,12 +5,10 @@ import derms.net.Packet;
 
 import java.io.IOException;
 import java.net.*;
-import java.time.Instant;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 /**
@@ -28,7 +26,6 @@ public class ReliableMulticast<T extends MessagePayload> {
     private final BlockingQueue<Message<T>> retransmissions; // Messages pending retransmission.
     private final Set<InetAddress> groupMembers;
     private final ConcurrentMulticastSocket outSock;
-    private final AtomicReference<Instant> lastSend;
     private final BlockingQueue<Message<T>> delivered;
     private final Logger log;
 
@@ -47,7 +44,6 @@ public class ReliableMulticast<T extends MessagePayload> {
         this.received = new ReceivedSet<T>();
         this.retransmissions = new LinkedBlockingQueue<Message<T>>();
         this.groupMembers = new ConcurrentHashMap<InetAddress, Void>().keySet();
-        this.lastSend = new AtomicReference<Instant>(Instant.now());
 
         this.outSock = new ConcurrentMulticastSocket(group.getPort());
         this.outSock.joinGroup(group.getAddress());
@@ -83,7 +79,6 @@ public class ReliableMulticast<T extends MessagePayload> {
         outSock.send(pkt);
         acks.clear();
         (new Thread(new Timeout<T>(msg, acks, retransmissions))).start();
-        lastSend.set(Instant.now());
     }
 
     /** Receive a message from the group, blocking if necessary until a message arrives. */
