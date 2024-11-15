@@ -22,7 +22,7 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
     private final BlockingQueue<Message<T>> retransmissions; // Messages pending retransmission.
     private final AtomicReference<Instant> lastSend;
     private final SocketAddress group;
-    private final ConcurrentMulticastSocket inSock, outSock;
+    private final ConcurrentMulticastSocket outSock;
     private final InetAddress laddr; // Local address.
     private final BlockingQueue<Message<T>> delivered;
     private final Logger log;
@@ -36,9 +36,6 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
 
         this.group = group;
 
-        this.inSock = new ConcurrentMulticastSocket();
-        this.inSock.joinGroup(group.getAddress());
-
         this.outSock = new ConcurrentMulticastSocket(group.getPort());
         this.outSock.joinGroup(group.getAddress());
 
@@ -48,7 +45,10 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
 
         this.log = Logger.getLogger(this.getClass().getName());
 
+        ConcurrentMulticastSocket inSock = new ConcurrentMulticastSocket();
+        inSock.joinGroup(group.getAddress());
         (new Thread(new Receive<T>(inSock, positiveAcks, negativeAcks, received, retransmissions, delivered))).start();
+
         (new Thread(new Retransmit<T>(retransmissions, outSock, group))).start();
     }
 
