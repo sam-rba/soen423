@@ -3,16 +3,19 @@ A line with no prefix is an incomplete task.
 
 * dataflow diagram
 * inter-city dataflow diagram
+* design
+* decide on CORBA/web
+* finalize client<->FE comm in dataflow diagram (CORBA/web)
+* assign roles
+* reliable multicast
 
-design
-tests
-decide on CORBA/web
-finalize client<->FE comm in dataflow diagram (CORBA/web)
-assign roles
 active replication
 high availability
 fault tolerance
 front end
-sequencer (total order)
-reliable multicast
 replica manager
+tests
+total order multicast (sequencer)
+test reliable multicast
+reliable unicast
+test reliable unicast
