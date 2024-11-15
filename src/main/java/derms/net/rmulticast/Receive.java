@@ -50,11 +50,14 @@ class Receive<T extends Serializable & Hashable> implements Runnable {
     }
 
     private void receive(Message<T> msg) {
+        groupMembers.add(msg.sender);
+
+        if (msg instanceof AnnounceMessage)
+            return;
+
         acks.add(msg.id());
         received.add(msg);
         delivered.add(msg);
-
-        groupMembers.add(msg.sender);
 
         nacks.remove(msg.id());
         retransmissions.remove(msg);

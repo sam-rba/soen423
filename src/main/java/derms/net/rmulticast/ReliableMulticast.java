@@ -53,6 +53,13 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
         (new Thread(new Retransmit<T>(retransmissions, outSock, group))).start();
 
         (new Thread(new Prune<T>(received, groupMembers))).start();
+
+        try {
+            (new Thread(new Announce(group, laddr, outSock))).start();
+        } catch (IOException e) {
+            log.severe("Failed to start announce thread: " + e.getMessage());
+            throw e;
+        }
     }
 
     public void send(T payload) throws IOException {
