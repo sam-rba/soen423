@@ -1,6 +1,5 @@
 package derms.net.rmulticast;
 
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /** Free memory from the received list. */
-class Prune<T extends Serializable & Hashable> implements Runnable {
+class Prune<T extends MessagePayload> implements Runnable {
     private static final Duration period = Duration.ofMinutes(1);
 
     private final ReceivedSet<T> received;

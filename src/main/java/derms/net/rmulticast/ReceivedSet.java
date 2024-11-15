@@ -1,6 +1,5 @@
 package derms.net.rmulticast;
 
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +7,7 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-class ReceivedSet<T extends Serializable & Hashable> {
+class ReceivedSet<T extends MessagePayload> {
     private final Queue<Message<T>> received;
 
     ReceivedSet() {

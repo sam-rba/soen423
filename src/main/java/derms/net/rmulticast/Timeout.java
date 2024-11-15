@@ -1,13 +1,12 @@
 package derms.net.rmulticast;
 
-import java.io.Serializable;
 import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
 /** If a message is not positively acknowledged after some time, Timeout puts it in the retransmissions list. */
-class Timeout<T extends Serializable & Hashable> implements Runnable {
+class Timeout<T extends MessagePayload> implements Runnable {
     private static final Duration timeout = Duration.ofSeconds(1);
 
     private final Message<T> msg;

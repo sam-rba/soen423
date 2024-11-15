@@ -3,14 +3,13 @@ package derms.net.rmulticast;
 import derms.net.ConcurrentMulticastSocket;
 import derms.net.Packet;
 
-import java.io.Serializable;
 import java.net.DatagramPacket;
 import java.net.SocketAddress;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
 /** Retransmit dropped messages. */
-class Retransmit<T extends Serializable & Hashable> implements Runnable {
+class Retransmit<T extends MessagePayload> implements Runnable {
     private final BlockingQueue<Message<T>> retransmissions;
     private final ConcurrentMulticastSocket outSock;
     private final SocketAddress group;

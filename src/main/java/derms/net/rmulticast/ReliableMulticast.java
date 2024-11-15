@@ -4,7 +4,6 @@ import derms.net.ConcurrentMulticastSocket;
 import derms.net.Packet;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.*;
 import java.time.Instant;
 import java.util.Set;
@@ -15,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 /** TODO */
-public class ReliableMulticast<T extends Serializable & Hashable> {
+public class ReliableMulticast<T extends MessagePayload> {
     private final SocketAddress group;
     private final InetAddress laddr; // Local address.
     private final Set<MessageID> acks; // Positively acknowledged messages.

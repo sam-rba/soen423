@@ -4,14 +4,13 @@ import derms.net.ConcurrentMulticastSocket;
 import derms.net.Packet;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
-class Receive<T extends Serializable & Hashable> implements Runnable {
+class Receive<T extends MessagePayload> implements Runnable {
     private static final int bufSize = 8192;
 
     private final ConcurrentMulticastSocket inSock;

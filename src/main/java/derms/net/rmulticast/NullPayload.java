@@ -1,8 +1,6 @@
 package derms.net.rmulticast;
 
-import java.io.Serializable;
-
-class NullPayload implements Serializable, Hashable {
+class NullPayload implements MessagePayload {
     @Override
     public int hash() {
         return -1;

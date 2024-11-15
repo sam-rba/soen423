@@ -3,7 +3,7 @@ package derms.net.rmulticast;
 import java.io.Serializable;
 import java.net.InetAddress;
 
-class Message<T extends Serializable & Hashable> implements Serializable {
+class Message<T extends MessagePayload> implements Serializable {
     T payload;
     InetAddress sender;
     MessageID[] acks; // IDs of messages that this message positively acknowledges.
