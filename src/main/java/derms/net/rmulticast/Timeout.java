@@ -2,7 +2,6 @@ package derms.net.rmulticast;
 
 import java.io.Serializable;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
@@ -12,13 +11,16 @@ class Timeout<T extends Serializable & Hashable> implements Runnable {
     private static final Duration timeout = Duration.ofSeconds(1);
 
     private final Message<T> msg;
-    private final Set<MessageID> positiveAcks;
+    private final Set<MessageID> acks; // Positively acknowledged messages.
     private final BlockingQueue<Message<T>> retransmissions;
     private final Logger log;
 
-    Timeout(Message<T> msg, Set<MessageID> positiveAcks, BlockingQueue<Message<T>> retransmissions) {
+    /**
+     * @param acks Positively acknowledged messages.
+     */
+    Timeout(Message<T> msg, Set<MessageID> acks, BlockingQueue<Message<T>> retransmissions) {
         this.msg = msg;
-        this.positiveAcks = positiveAcks;
+        this.acks = acks;
         this.retransmissions = retransmissions;
         this.log = Logger.getLogger(this.getClass().getName());
     }
@@ -28,7 +30,7 @@ class Timeout<T extends Serializable & Hashable> implements Runnable {
         try {
             for (;;) {
                 Wait.forDuration(timeout);
-                if (positiveAcks.contains(msg.id())) {
+                if (acks.contains(msg.id())) {
                     log.info("Message " + msg.id() + "positively ack'ed.");
                     return;
                 } else {

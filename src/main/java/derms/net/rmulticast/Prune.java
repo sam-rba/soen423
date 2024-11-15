@@ -91,7 +91,7 @@ class Prune<T extends Serializable & Hashable> implements Runnable {
         potentialPredecessors.removeAll(seq);
 
         // Add messages that b positively acknowledged.
-        for (MessageID mid : b.positiveAcks) {
+        for (MessageID mid : b.acks) {
             try {
                 Message<T> msg = received.getByID(mid);
                 potentialPredecessors.add(msg);
@@ -101,7 +101,7 @@ class Prune<T extends Serializable & Hashable> implements Runnable {
         }
 
         // Remove messages that c negatively acknowledged.
-        for (MessageID mid : c.negativeAcks) {
+        for (MessageID mid : c.nacks) {
             for (int i = 0; i < potentialPredecessors.size(); i++) {
                 Message<T> msg = potentialPredecessors.get(i);
                 if (msg.id().equals(mid)) {

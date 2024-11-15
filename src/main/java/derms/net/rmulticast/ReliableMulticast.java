@@ -18,8 +18,8 @@ import java.util.logging.Logger;
 public class ReliableMulticast<T extends Serializable & Hashable> {
     private final SocketAddress group;
     private final InetAddress laddr; // Local address.
-    private final Set<MessageID> positiveAcks; // Positively acknowledged messages.
-    private final Set<MessageID> negativeAcks; // Negatively acknowledged messages.
+    private final Set<MessageID> acks; // Positively acknowledged messages.
+    private final Set<MessageID> nacks; // Negatively acknowledged messages.
     private final ReceivedSet<T> received;
     private final BlockingQueue<Message<T>> retransmissions; // Messages pending retransmission.
     private final Set<InetAddress> groupMembers;
@@ -32,8 +32,8 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
         this.group = group;
         this.laddr = laddr;
 
-        this.positiveAcks = new ConcurrentHashMap<MessageID, Void>().keySet();
-        this.negativeAcks = new ConcurrentHashMap<MessageID, Void>().keySet();
+        this.acks = new ConcurrentHashMap<MessageID, Void>().keySet();
+        this.nacks = new ConcurrentHashMap<MessageID, Void>().keySet();
         this.received = new ReceivedSet<T>();
         this.retransmissions = new LinkedBlockingQueue<Message<T>>();
         this.groupMembers = new ConcurrentHashMap<InetAddress, Void>().keySet();
@@ -48,7 +48,7 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
 
         ConcurrentMulticastSocket inSock = new ConcurrentMulticastSocket();
         inSock.joinGroup(group.getAddress());
-        (new Thread(new Receive<T>(inSock, positiveAcks, negativeAcks, received, retransmissions, groupMembers, delivered))).start();
+        (new Thread(new Receive<T>(inSock, acks, nacks, received, retransmissions, groupMembers, delivered))).start();
 
         (new Thread(new Retransmit<T>(retransmissions, outSock, group))).start();
 
@@ -59,12 +59,12 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
         Message<T> msg = new Message<T>(
                 payload,
                 laddr,
-                positiveAcks.toArray(new MessageID[0]),
-                negativeAcks.toArray(new MessageID[0]));
+                acks.toArray(new MessageID[0]),
+                nacks.toArray(new MessageID[0]));
         DatagramPacket pkt = Packet.encode(msg, group);
         outSock.send(pkt);
-        positiveAcks.clear();
-        (new Thread(new Timeout<T>(msg, positiveAcks, retransmissions))).start();
+        acks.clear();
+        (new Thread(new Timeout<T>(msg, acks, retransmissions))).start();
         lastSend.set(Instant.now());
     }
 

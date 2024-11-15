@@ -6,14 +6,18 @@ import java.net.InetAddress;
 class Message<T extends Serializable & Hashable> implements Serializable {
     T payload;
     InetAddress sender;
-    MessageID[] positiveAcks; // IDs of messages that this message positively acknowledges.
-    MessageID[] negativeAcks; // IDs of messages that this message negatively acknowledges.
+    MessageID[] acks; // IDs of messages that this message positively acknowledges.
+    MessageID[] nacks; // IDs of messages that this message negatively acknowledges.
 
-    Message(T payload, InetAddress sender, MessageID[] positiveAcks, MessageID[] negativeAcks) {
+    /**
+     * @param acks IDs of messages that this message positively acknowledges.
+     * @param nacks IDs of messages that this message negatively acknowledges.
+     */
+    Message(T payload, InetAddress sender, MessageID[] acks, MessageID[] nacks) {
         this.payload = payload;
         this.sender = sender;
-        this.positiveAcks = positiveAcks;
-        this.negativeAcks = negativeAcks;
+        this.acks = acks;
+        this.nacks = nacks;
     }
 
     MessageID id() {

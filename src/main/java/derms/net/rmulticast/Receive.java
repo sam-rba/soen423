@@ -15,18 +15,18 @@ class Receive<T extends Serializable & Hashable> implements Runnable {
     private static final int bufSize = 8192;
 
     private final ConcurrentMulticastSocket inSock;
-    private final Set<MessageID> positiveAcks;
-    private final Set<MessageID> negativeAcks;
-    private final ReceivedSet<T> received;
+    private final Set<MessageID> acks;
+    private final Set<MessageID> nacks; // Positively acknowledged messages.
+    private final ReceivedSet<T> received; // Negatively acknowledged messages.
     private final BlockingQueue<Message<T>> retransmissions;
     private final Set<InetAddress> groupMembers;
     private final BlockingQueue<Message<T>> delivered;
     private final Logger log;
 
-    Receive(ConcurrentMulticastSocket inSock, Set<MessageID> positiveAcks, Set<MessageID> negativeAcks, ReceivedSet<T> received, BlockingQueue<Message<T>> retransmissions, Set<InetAddress> groupMembers, BlockingQueue<Message<T>> delivered) {
+    Receive(ConcurrentMulticastSocket inSock, Set<MessageID> acks, Set<MessageID> nacks, ReceivedSet<T> received, BlockingQueue<Message<T>> retransmissions, Set<InetAddress> groupMembers, BlockingQueue<Message<T>> delivered) {
         this.inSock = inSock;
-        this.positiveAcks = positiveAcks;
-        this.negativeAcks = negativeAcks;
+        this.acks = acks;
+        this.nacks = nacks;
         this.received = received;
         this.retransmissions = retransmissions;
         this.groupMembers = groupMembers;
@@ -50,26 +50,26 @@ class Receive<T extends Serializable & Hashable> implements Runnable {
     }
 
     private void receive(Message<T> msg) {
-        positiveAcks.add(msg.id());
+        acks.add(msg.id());
         received.add(msg);
         delivered.add(msg);
 
         groupMembers.add(msg.sender);
 
-        negativeAcks.remove(msg.id());
+        nacks.remove(msg.id());
         retransmissions.remove(msg);
 
-        for (MessageID mid : msg.positiveAcks) {
-            positiveAcks.remove(mid);
+        for (MessageID mid : msg.acks) {
+            acks.remove(mid);
             if (!received.contains(mid))
-                negativeAcks.add(mid);
+                nacks.add(mid);
         }
 
-        for (MessageID mid : msg.negativeAcks) {
+        for (MessageID mid : msg.nacks) {
             if (received.contains(mid)) {
                 retransmissions.add(msg);
             } else {
-                negativeAcks.add(mid);
+                nacks.add(mid);
             }
         }
     }
