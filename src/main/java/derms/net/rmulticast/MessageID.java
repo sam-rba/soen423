@@ -11,4 +11,14 @@ class MessageID {
     public int hashCode() {
         return id;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (obj.getClass() != this.getClass())
+            return false;
+        MessageID other = (MessageID) obj;
+        return other.id == this.id;
+    }
 }

@@ -24,4 +24,16 @@ class Message<T extends Serializable & Hashable> implements Serializable {
     public int hashCode() {
         return payload.hash();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (obj.getClass() != this.getClass())
+            return false;
+        Message<?> other = (Message<?>) obj;
+        if (other.payload.getClass() != this.payload.getClass())
+            return false;
+        return other.id().equals(this.id());
+    }
 }
