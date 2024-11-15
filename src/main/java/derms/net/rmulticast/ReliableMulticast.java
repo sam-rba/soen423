@@ -61,7 +61,7 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
         DatagramPacket pkt = Packet.encode(msg, group);
         outSock.send(pkt);
         positiveAcks.clear();
-        (new Thread(new Timeout(msg.id()))).start();
+        (new Thread(new Timeout<T>(msg, positiveAcks, retransmissions))).start();
         lastSend.set(Instant.now());
     }
 
@@ -72,16 +72,4 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
         }
     }
 
-    private class Timeout implements Runnable {
-        MessageID mid;
-
-        private Timeout(MessageID mid) {
-            this.mid = mid;
-        }
-
-        @Override
-        public void run() {
-            // TODO
-        }
-    }
 }
