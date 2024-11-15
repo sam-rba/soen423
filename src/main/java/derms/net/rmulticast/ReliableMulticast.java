@@ -18,7 +18,6 @@ import java.util.logging.Logger;
 public class ReliableMulticast<T extends Serializable & Hashable> {
     private final Set<MessageID> positiveAcks; // Positively acknowledged messages.
     private final Set<MessageID> negativeAcks; // Negatively acknowledged messages.
-    private final ReceivedSet<T> received;
     private final BlockingQueue<Message<T>> retransmissions; // Messages pending retransmission.
     private final AtomicReference<Instant> lastSend;
     private final SocketAddress group;
@@ -30,7 +29,6 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
     public ReliableMulticast(InetSocketAddress group, InetAddress laddr) throws IOException {
         this.positiveAcks = new ConcurrentHashMap<MessageID, Void>().keySet();
         this.negativeAcks = new ConcurrentHashMap<MessageID, Void>().keySet();
-        this.received = new ReceivedSet<T>();
         this.retransmissions = new LinkedBlockingQueue<Message<T>>();
         this.lastSend = new AtomicReference<Instant>(Instant.now());
 
@@ -47,7 +45,7 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
 
         ConcurrentMulticastSocket inSock = new ConcurrentMulticastSocket();
         inSock.joinGroup(group.getAddress());
-        (new Thread(new Receive<T>(inSock, positiveAcks, negativeAcks, received, retransmissions, delivered))).start();
+        (new Thread(new Receive<T>(inSock, positiveAcks, negativeAcks, retransmissions, delivered))).start();
 
         (new Thread(new Retransmit<T>(retransmissions, outSock, group))).start();
     }
