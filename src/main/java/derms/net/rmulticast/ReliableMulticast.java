@@ -48,7 +48,7 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
 
         this.log = Logger.getLogger(this.getClass().getName());
 
-        (new Thread(new Receive<T>(inSock, positiveAcks, negativeAcks, received, retransmissions))).start();
+        (new Thread(new Receive<T>(inSock, positiveAcks, negativeAcks, received, retransmissions, delivered))).start();
         (new Thread(new Retransmit<T>(retransmissions, outSock, group))).start();
     }
 
@@ -63,5 +63,10 @@ public class ReliableMulticast<T extends Serializable & Hashable> {
         positiveAcks.clear();
         (new Thread(new Timeout<T>(msg, positiveAcks, retransmissions))).start();
         lastSend.set(Instant.now());
+    }
+
+    public T receive() throws InterruptedException {
+        Message<T> msg = delivered.take();
+        return msg.payload;
     }
 }

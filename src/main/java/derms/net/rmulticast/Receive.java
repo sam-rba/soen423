@@ -18,14 +18,16 @@ class Receive<T extends Serializable & Hashable> implements Runnable {
     private final Set<MessageID> negativeAcks;
     private final ReceivedSet<T> received;
     private final BlockingQueue<Message<T>> retransmissions;
+    private final BlockingQueue<Message<T>> delivered;
     private final Logger log;
 
-    Receive(ConcurrentMulticastSocket inSock, Set<MessageID> positiveAcks, Set<MessageID> negativeAcks, ReceivedSet<T> received, BlockingQueue<Message<T>> retransmissions) {
+    Receive(ConcurrentMulticastSocket inSock, Set<MessageID> positiveAcks, Set<MessageID> negativeAcks, ReceivedSet<T> received, BlockingQueue<Message<T>> retransmissions, BlockingQueue<Message<T>> delivered) {
         this.inSock = inSock;
         this.positiveAcks = positiveAcks;
         this.negativeAcks = negativeAcks;
         this.received = received;
         this.retransmissions = retransmissions;
+        this.delivered = delivered;
         this.log = Logger.getLogger(this.getClass().getName());
     }
 
@@ -47,6 +49,7 @@ class Receive<T extends Serializable & Hashable> implements Runnable {
     private void receive(Message<T> msg) {
         positiveAcks.add(msg.id());
         received.add(msg);
+        delivered.add(msg);
 
         negativeAcks.remove(msg.id());
         retransmissions.remove(msg);
