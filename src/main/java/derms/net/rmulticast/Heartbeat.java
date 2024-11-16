@@ -47,7 +47,7 @@ class Heartbeat implements Runnable {
                 }
             }
         } catch (InterruptedException e) {
-            log.info("Heartbeat thread interrupted: " + e.getMessage());
+            log.info("Interrupted. Shutting down.");
         }
     }
 

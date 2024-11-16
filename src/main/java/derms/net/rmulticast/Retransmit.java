@@ -36,7 +36,7 @@ class Retransmit<T extends MessagePayload> implements Runnable {
                 }
             }
         } catch (InterruptedException e) {
-            log.info("Retransmit thread interrupted: " + e.getMessage());
+            log.info("Interrupted. Shutting down.");
         }
     }
 }

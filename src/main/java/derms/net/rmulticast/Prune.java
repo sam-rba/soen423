@@ -32,7 +32,7 @@ class Prune<T extends MessagePayload> implements Runnable {
                 prune();
             }
         } catch (InterruptedException e) {
-            log.info("Prune thread interrupted: " + e.getMessage());
+            log.info("Interrupted. Shutting down.");
         }
     }
 

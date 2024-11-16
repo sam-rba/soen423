@@ -10,6 +10,8 @@ public class Wait {
         Duration elapsed;
         do {
             Thread.yield();
+            if (Thread.interrupted())
+                throw new InterruptedException();
             elapsed = Duration.between(start, Instant.now());
         } while (elapsed.compareTo(dur) < 0);
     }

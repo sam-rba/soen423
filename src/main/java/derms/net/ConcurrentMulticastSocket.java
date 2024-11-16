@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.SocketException;
+import java.time.Duration;
 
 public class ConcurrentMulticastSocket {
     private final MulticastSocket sock;
@@ -29,6 +31,14 @@ public class ConcurrentMulticastSocket {
 
     public synchronized void receive(DatagramPacket p) throws IOException {
         sock.receive(p);
+    }
+
+    public synchronized void setSoTimeout(Duration timeout) throws SocketException {
+        sock.setSoTimeout((int) timeout.toMillis());
+    }
+
+    public synchronized void close() {
+        sock.close();
     }
 
     @Override
