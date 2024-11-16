@@ -5,10 +5,12 @@ import derms.net.Packet;
 
 import java.io.IOException;
 import java.net.*;
+import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
@@ -84,6 +86,27 @@ public class ReliableMulticast<T extends MessagePayload> {
     /** Receive a message from the group, blocking if necessary until a message arrives. */
     public T receive() throws InterruptedException {
         Message<T> msg = delivered.take(); // Blocks until a message becomes available.
+        return msg.payload;
+    }
+
+    /** Receive a message, or return null if none are available. */
+    public T tryReceive() {
+        Message<T> msg = delivered.poll();
+        if (msg == null)
+            return null;
+        return msg.payload;
+    }
+
+    /**
+     * Receive a message, waiting up to the specified wait time if necessary.
+     *
+     * @return A message received from the group, or null if the specified waiting
+     * time elapses before a message arrives.
+     */
+    public T tryReceive(Duration waitTime) throws InterruptedException {
+        Message<T> msg = delivered.poll(waitTime.toMillis(), TimeUnit.MILLISECONDS);
+        if (msg == null)
+            return null;
         return msg.payload;
     }
 }
