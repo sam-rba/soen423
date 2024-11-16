@@ -40,4 +40,9 @@ class Message<T extends MessagePayload> implements Serializable {
             return false;
         return other.id().equals(this.id());
     }
+
+    @Override
+    public String toString() {
+        return id().toString();
+    }
 }

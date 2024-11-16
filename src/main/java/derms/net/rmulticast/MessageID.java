@@ -21,4 +21,9 @@ class MessageID {
         MessageID other = (MessageID) obj;
         return other.id == this.id;
     }
+
+    @Override
+    public String toString() {
+        return ""+id;
+    }
 }
