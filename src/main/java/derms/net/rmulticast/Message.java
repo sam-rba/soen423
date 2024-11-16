@@ -43,6 +43,6 @@ class Message<T extends MessagePayload> implements Serializable {
 
     @Override
     public String toString() {
-        return id().toString();
+        return getClass().getSimpleName() + "{" + id() + ", " + payload + "}";
     }
 }
