@@ -47,14 +47,14 @@ public class ReliableMulticast<T extends MessagePayload> {
         this.retransmissions = new LinkedBlockingQueue<Message<T>>();
         this.groupMembers = new ConcurrentHashMap<InetAddress, Void>().keySet();
 
-        this.outSock = new ConcurrentMulticastSocket(group.getPort());
+        this.outSock = new ConcurrentMulticastSocket();
         this.outSock.joinGroup(group.getAddress());
 
         this.delivered = new LinkedBlockingQueue<Message<T>>();
 
         this.log = Logger.getLogger(this.getClass().getName());
 
-        ConcurrentMulticastSocket inSock = new ConcurrentMulticastSocket();
+        ConcurrentMulticastSocket inSock = new ConcurrentMulticastSocket(group.getPort());
         inSock.joinGroup(group.getAddress());
         (new Thread(new Receive<T>(inSock, acks, nacks, received, retransmissions, groupMembers, delivered))).start();
 
