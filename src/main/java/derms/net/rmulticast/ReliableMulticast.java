@@ -41,11 +41,11 @@ public class ReliableMulticast<T extends MessagePayload> {
         this.group = group;
         this.laddr = laddr;
 
-        this.acks = new ConcurrentHashMap<MessageID, Void>().keySet();
-        this.nacks = new ConcurrentHashMap<MessageID, Void>().keySet();
+        this.acks = ConcurrentHashMap.newKeySet();
+        this.nacks = ConcurrentHashMap.newKeySet();
         this.received = new ReceivedSet<T>();
         this.retransmissions = new LinkedBlockingQueue<Message<T>>();
-        this.groupMembers = new ConcurrentHashMap<InetAddress, Void>().keySet();
+        this.groupMembers = ConcurrentHashMap.newKeySet();
 
         this.outSock = new ConcurrentMulticastSocket();
         this.outSock.joinGroup(group.getAddress());
