@@ -36,12 +36,14 @@ class Receive<T extends MessagePayload> implements Runnable {
 
     @Override
     public void run() {
+        log.info("Listening on " + inSock);
         DatagramPacket pkt = new DatagramPacket(new byte[bufSize], bufSize);
         for (;;) {
             try {
                 inSock.receive(pkt);
                 Message<?> msg = Packet.decode(pkt, Message.class);
                 receive(msg);
+                log.info("Received " + msg);
             } catch (IOException | ClassNotFoundException | ClassCastException e) {
                 log.warning(e.getMessage());
             }

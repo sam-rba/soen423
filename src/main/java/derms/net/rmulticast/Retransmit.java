@@ -30,6 +30,7 @@ class Retransmit<T extends MessagePayload> implements Runnable {
                 try {
                     DatagramPacket pkt = Packet.encode(msg, group);
                     outSock.send(pkt);
+                    log.info("Retransmitted " + msg);
                 } catch (Exception e) {
                     log.warning(e.getMessage());
                 }

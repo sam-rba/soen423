@@ -81,6 +81,7 @@ public class ReliableMulticast<T extends MessagePayload> {
         outSock.send(pkt);
         acks.clear();
         (new Thread(new Timeout<T>(msg, acks, retransmissions))).start();
+        log.info("Sent " + msg + " from " + outSock + " to " + group);
     }
 
     /** Receive a message from the group, blocking if necessary until a message arrives. */

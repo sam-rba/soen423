@@ -46,8 +46,10 @@ class Prune<T extends MessagePayload> implements Runnable {
         for (InetAddress member : groupMembers) {
             try {
                 Message<T> c = received.mostRecentSentBy(member);
-                if (!receivedByMemberAtTimeOfSending(a, member, c))
+                if (!receivedByMemberAtTimeOfSending(a, member, c)) {
+                    log.info(member.toString() + " has not received " + a + "; cannot prune it.");
                     return; // Member has not received a -- cannot prune it.
+                }
             } catch (NoSuchElementException e) {
                 log.warning("No message received from " + member);
                 return;
@@ -56,6 +58,7 @@ class Prune<T extends MessagePayload> implements Runnable {
 
         // All group members have received and acknowledged message a. It is safe to delete.
         received.remove(a);
+        log.info("Removed " + a + " from received list.");
     }
 
     /**

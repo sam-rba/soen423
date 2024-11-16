@@ -30,4 +30,9 @@ public class ConcurrentMulticastSocket {
     public synchronized void receive(DatagramPacket p) throws IOException {
         sock.receive(p);
     }
+
+    @Override
+    public String toString() {
+        return sock.getLocalSocketAddress().toString();
+    }
 }
