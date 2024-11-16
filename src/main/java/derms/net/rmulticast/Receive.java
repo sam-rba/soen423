@@ -50,13 +50,23 @@ class Receive<T extends MessagePayload> implements Runnable {
 
     private void receive(Message<?> msg) throws ClassCastException {
         groupMembers.add(msg.sender);
+        receiveAcks(msg);
+        receiveNacks(msg);
 
+        if (msg instanceof HeartbeatMessage)
+            return; // Only deliver in-band messages.
+        deliver((Message<T>) msg);
+    }
+
+    private void receiveAcks(Message<?> msg) {
         for (MessageID mid : msg.acks) {
             acks.remove(mid);
             if (!received.contains(mid))
                 nacks.add(mid);
         }
+    }
 
+    private void receiveNacks(Message<?> msg) {
         for (MessageID mid : msg.nacks) {
             try {
                 Message<T> rmsg = received.getByID(mid);
@@ -65,10 +75,6 @@ class Receive<T extends MessagePayload> implements Runnable {
                 nacks.add(mid);
             }
         }
-
-        if (msg instanceof HeartbeatMessage)
-            return; // Only deliver in-band messages.
-        deliver((Message<T>) msg);
     }
 
     private void deliver(Message<T> msg) {
