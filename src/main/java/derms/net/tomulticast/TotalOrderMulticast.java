@@ -19,8 +19,8 @@ import java.util.logging.Logger;
  * none of them will.</p>
  *
  * <p><b>Only one sender is allowed per multicast group</b>, but a group may have multiple
- * receivers. Use {@link derms.net.tomulticast.TotalOrderMulticastSender} to send
- * messages, and {@link derms.net.tomulticast.TotalOrderMulticastReceiver} to receive
+ * receivers. Use {@link TotalOrderMulticastSender} to send
+ * messages, and {@link TotalOrderMulticastReceiver} to receive
  * them.</p>
  */
 public abstract class TotalOrderMulticast<T extends MessagePayload> {
