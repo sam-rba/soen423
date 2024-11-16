@@ -61,9 +61,9 @@ public class ReliableMulticast<T extends MessagePayload> {
         (new Thread(new Prune<T>(received, groupMembers))).start();
 
         try {
-            (new Thread(new Announce(group, laddr, outSock))).start();
+            (new Thread(new Heartbeat(group, laddr, acks, nacks, outSock))).start();
         } catch (IOException e) {
-            log.severe("Failed to start announce thread: " + e.getMessage());
+            log.severe("Failed to start heartbeat thread: " + e.getMessage());
             throw e;
         }
     }
