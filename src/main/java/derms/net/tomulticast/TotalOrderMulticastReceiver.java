@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
 
+/** One of the receiving processes in {@link TotalOrderMulticast} group. */
 public class TotalOrderMulticastReceiver<T extends MessagePayload> {
     private static final Duration terminationTimeout = Duration.ofSeconds(1);
 
@@ -16,6 +17,12 @@ public class TotalOrderMulticastReceiver<T extends MessagePayload> {
     private final Logger log;
     private final ExecutorService pool;
 
+    /**
+     * Join the specified totally-ordered multicast group as a receiver.
+     *
+     * @param group The IP address and port of the multicast group.
+     * @param laddr The IP address of the local process.
+     */
     public TotalOrderMulticastReceiver(InetSocketAddress group, InetAddress laddr) throws IOException {
         this.deliver = new LinkedBlockingQueue<Message<T>>();
         this.log = Logger.getLogger(getClass().getName());
@@ -24,6 +31,7 @@ public class TotalOrderMulticastReceiver<T extends MessagePayload> {
         pool.execute(new Receive<T>(group, laddr, deliver));
     }
 
+    /** Close the underlying socket. */
     public void close() {
         pool.shutdownNow();
         try {
