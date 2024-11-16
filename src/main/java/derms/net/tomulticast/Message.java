@@ -2,7 +2,7 @@ package derms.net.tomulticast;
 
 import derms.net.rmulticast.MessagePayload;
 
-class Message<T extends MessagePayload> implements MessagePayload {
+class Message<T extends MessagePayload> implements MessagePayload, Comparable<Message<T>> {
     long seq; // Sequence number.
     T payload;
 
@@ -31,6 +31,11 @@ class Message<T extends MessagePayload> implements MessagePayload {
         if (other.payload.getClass() != this.payload.getClass())
             return false;
         return other.seq == this.seq && other.hash() == this.hash();
+    }
+
+    @Override
+    public int compareTo(Message<T> other) {
+        return Long.compare(this.seq, other.seq);
     }
 
     @Override
