@@ -30,6 +30,10 @@ class Message<T extends MessagePayload> implements Serializable {
         return new MessageID(hashCode());
     }
 
+    boolean isSentBy(InetAddress member) {
+        return sender.equals(member);
+    }
+
     @Override
     public int hashCode() {
         return payload.hash() * salt;

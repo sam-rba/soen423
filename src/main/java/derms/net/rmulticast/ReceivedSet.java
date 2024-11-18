@@ -57,7 +57,7 @@ class ReceivedSet<T extends MessagePayload> {
     Message<T> mostRecentSentBy(InetAddress member) throws NoSuchElementException {
         Entry<T> recent = null;
         for (Entry<T> e : received.values())
-            if (e.msg.sender.equals(member) && (recent == null || e.timestamp.isAfter(recent.timestamp)))
+            if (e.msg.isSentBy(member) && (recent == null || e.timestamp.isAfter(recent.timestamp)))
                 recent = e;
         if (recent == null)
             throw new NoSuchElementException("no message from " + member + " in received list.");
@@ -67,7 +67,7 @@ class ReceivedSet<T extends MessagePayload> {
     List<Message<T>> allSentBy(InetAddress sender) {
         List<Message<T>> sent = new ArrayList<Message<T>>();
        for (Entry<T> e : received.values()) {
-           if (e.msg.sender.equals(sender))
+           if (e.msg.isSentBy(sender))
                sent.add(e.msg);
        }
        return sent;
