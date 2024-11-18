@@ -95,8 +95,8 @@ class Receive<T extends MessagePayload> implements Runnable {
     private void deliver(Message<T> msg) {
         acks.add(msg.id());
         nacks.remove(msg.id());
-        received.add(msg);
         retransmissions.remove(msg);
-        delivered.add(msg);
+        if (received.add(msg))
+            delivered.add(msg); // First time seeing this message; deliver it.
     }
 }

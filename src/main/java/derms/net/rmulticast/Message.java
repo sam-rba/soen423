@@ -4,7 +4,12 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 class Message<T extends MessagePayload> implements Serializable {
+    /* Used as a salt in the hash function. Allows different messages to have
+     * different IDs, even if they have the same payload. */
+    private static int seq = 1;
+
     T payload;
+    int salt; // Used in hash function. Allows messages to have unique IDs, even if they have the same payload.
     InetAddress sender;
     MessageID[] acks; // IDs of messages that this message positively acknowledges.
     MessageID[] nacks; // IDs of messages that this message negatively acknowledges.
@@ -15,6 +20,7 @@ class Message<T extends MessagePayload> implements Serializable {
      */
     Message(T payload, InetAddress sender, MessageID[] acks, MessageID[] nacks) {
         this.payload = payload;
+        this.salt = seq++;
         this.sender = sender;
         this.acks = acks;
         this.nacks = nacks;
@@ -26,7 +32,7 @@ class Message<T extends MessagePayload> implements Serializable {
 
     @Override
     public int hashCode() {
-        return payload.hash();
+        return payload.hash() * salt;
     }
 
     @Override

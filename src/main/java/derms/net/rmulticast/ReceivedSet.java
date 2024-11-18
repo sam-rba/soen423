@@ -14,8 +14,18 @@ class ReceivedSet<T extends MessagePayload> {
         this.received = new ConcurrentLinkedQueue<Message<T>>();
     }
 
-    void add(Message<T> e) {
-        received.add(e);
+    /**
+     * Add a message to the set if it is not already present.
+     *
+     * @param msg The message to add to the set.
+     * @return True if the set did not already contain the specified message.
+     */
+    // TODO: faster insertion.
+    boolean add(Message<T> msg) {
+        if (contains(msg))
+            return false;
+        received.add(msg);
+        return true;
     }
 
     // TODO: faster search.
@@ -33,6 +43,10 @@ class ReceivedSet<T extends MessagePayload> {
         } catch (NoSuchElementException e) {
             return false;
         }
+    }
+
+    boolean contains(Message<T> msg) {
+        return contains(msg.id());
     }
 
     /** Remove the specified message from the set, if it is present. */
