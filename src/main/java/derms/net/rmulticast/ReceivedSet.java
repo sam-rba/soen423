@@ -38,10 +38,6 @@ class ReceivedSet<T extends MessagePayload> {
         }
     }
 
-    boolean contains(Message<T> msg) {
-        return contains(msg.id());
-    }
-
     /** Remove the specified message from the set, if it is present. */
     void remove(Message<T> msg) {
         received.remove(msg.id());
