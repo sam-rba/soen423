@@ -2,6 +2,8 @@ package derms.net;
 
 import java.io.*;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 public class Packet {
@@ -13,6 +15,10 @@ public class Packet {
         byte[] buf = byteStream.toByteArray();
         objStream.close();
         return new DatagramPacket(buf, buf.length, dst);
+    }
+
+    public static DatagramPacket encode(Serializable obj, InetAddress dstAddr, int dstPort) throws IOException {
+        return encode(obj, new InetSocketAddress(dstAddr, dstPort));
     }
 
     public static <T extends Serializable> T decode(DatagramPacket pkt, Class<T> clazz) throws IOException, ClassNotFoundException, ClassCastException {
