@@ -47,7 +47,7 @@ class ReceivedSet<T extends MessagePayload> {
     Message<T> peekOldest() {
         Entry<T> oldest = null;
         for (Entry<T> e : received.values())
-            if (oldest == null || e.timestamp.isBefore(oldest.timestamp))
+            if (oldest == null || e.isBefore(oldest))
                 oldest = e;
         if (oldest == null)
             return null;
@@ -57,7 +57,7 @@ class ReceivedSet<T extends MessagePayload> {
     Message<T> mostRecentSentBy(InetAddress member) throws NoSuchElementException {
         Entry<T> recent = null;
         for (Entry<T> e : received.values())
-            if (e.msg.isSentBy(member) && (recent == null || e.timestamp.isAfter(recent.timestamp)))
+            if (e.msg.isSentBy(member) && (recent == null || e.isAfter(recent)))
                 recent = e;
         if (recent == null)
             throw new NoSuchElementException("no message from " + member + " in received list.");
@@ -80,6 +80,14 @@ class ReceivedSet<T extends MessagePayload> {
         private Entry(Message<T> msg) {
             this.msg = msg;
             this.timestamp = Instant.now();
+        }
+
+        private boolean isBefore(Entry<T> other) {
+            return this.timestamp.isBefore(other.timestamp);
+        }
+
+        private boolean isAfter(Entry<T> other) {
+            return this.timestamp.isAfter(other.timestamp);
         }
 
         @Override
