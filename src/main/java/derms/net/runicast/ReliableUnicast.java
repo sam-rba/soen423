@@ -19,7 +19,6 @@ public class ReliableUnicast {
         int lport = sock.getLocalPort();
         Connection conn = new Connection(laddr, lport, raddr, rport, sock);
 
-        conn.sendCtl(Type.sync, conn.id0, 0);
         conn.state.set(State.syncer);
         conn.start();
         while (conn.state.get() == State.syncer)

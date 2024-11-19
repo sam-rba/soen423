@@ -118,6 +118,8 @@ public class Connection implements Runnable {
         Instant tstart = Instant.now();
         for (;;) {
             try {
+                sendCtl(Type.sync, id0, 0);
+
                 ControlMessage msg = recvCtl(rexitTimeout);
                 if (msg.type == Type.ack && msg.ack != id0
                         || msg.type == Type.close && msg.ack == id0) {
@@ -126,8 +128,6 @@ public class Connection implements Runnable {
                 } else if (msg.type == Type.sync && msg.ack == id0) {
                     state.set(State.established);
                     return;
-                } else {
-                    continue;
                 }
             } catch (SocketTimeoutException e) {
                 Duration elapsed = Duration.between(tstart, Instant.now());
@@ -135,8 +135,6 @@ public class Connection implements Runnable {
                     state.set(State.closed);
                     return;
                 }
-                sendCtl(Type.sync, id0, 0);
-                continue;
             }
         }
     }
