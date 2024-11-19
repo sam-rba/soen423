@@ -2,8 +2,10 @@ package derms.net.runicast;
 
 import derms.net.ConcurrentDatagramSocket;
 import derms.net.Packet;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
+import java.io.NotActiveException;
 import java.net.*;
 import java.time.Duration;
 import java.time.Instant;
@@ -85,19 +87,19 @@ public class Connection implements Runnable {
                         syncer();
                         continue;
                     case syncee:
-                        // TODO
+                        syncee();
                         continue;
                     case established:
-                        // TODO
+                        established();
                         continue;
                     case listening:
-                        // TODO
+                        listening();
                         continue;
                     case closing:
-                        // TODO
+                        closing();
                         continue;
                     case opening:
-                        // TODO
+                        opening();
                         continue;
                     default:
                         throw new IllegalStateException("illegal connection state: " + state);
@@ -131,6 +133,26 @@ public class Connection implements Runnable {
                 }
             }
         }
+    }
+
+    private void syncee() {
+        throw new NotImplementedException();
+    }
+
+    private void established() {
+        throw new NotImplementedException();
+    }
+
+    private void listening() {
+        throw new NotImplementedException();
+    }
+
+    private void closing() {
+        throw new NotImplementedException();
+    }
+
+    private void opening() {
+        throw new NotImplementedException();
     }
 
     private void sendCtl(Type type, int id, int ack) throws IOException {
