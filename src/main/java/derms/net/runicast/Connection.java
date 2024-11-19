@@ -71,12 +71,6 @@ public class Connection implements Runnable {
         pool.execute(this);
     }
 
-    void sendCtl(Type type, int id, int ack) throws IOException {
-        ControlMessage msg = new ControlMessage(type, id, ack);
-        DatagramPacket pkt = Packet.encode(msg, raddr, rport);
-        sock.send(pkt);
-    }
-
     @Override
     public void run() {
         for (;;) {
@@ -137,6 +131,12 @@ public class Connection implements Runnable {
                 }
             }
         }
+    }
+
+    private void sendCtl(Type type, int id, int ack) throws IOException {
+        ControlMessage msg = new ControlMessage(type, id, ack);
+        DatagramPacket pkt = Packet.encode(msg, raddr, rport);
+        sock.send(pkt);
     }
 
     private ControlMessage recvCtl(Duration timeout) throws IOException, SocketTimeoutException, ClassNotFoundException {
