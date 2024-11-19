@@ -1,5 +1,7 @@
 package derms.net.runicast;
 
+import derms.net.ConcurrentDatagramSocket;
+
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -11,7 +13,7 @@ public class ReliableUnicast {
     }
 
     public static Connection connect(InetAddress raddr, int rport) throws IOException {
-        DatagramSocket sock = new DatagramSocket();
+        ConcurrentDatagramSocket sock = new ConcurrentDatagramSocket();
         sock.connect(raddr, rport);
         InetAddress laddr = sock.getLocalAddress();
         int lport = sock.getLocalPort();
