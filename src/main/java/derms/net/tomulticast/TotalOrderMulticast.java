@@ -43,7 +43,7 @@ public abstract class TotalOrderMulticast<T extends MessagePayload> {
 
     /** Increment the sequence number. */
     protected void incSeq() {
-        if (seq < seq.MAX_VALUE-1) {
+        if (seq < seq.MAX_VALUE) {
             seq++;
         } else {
             log.warning("Sequence number overflow. Wrapping to 0.");

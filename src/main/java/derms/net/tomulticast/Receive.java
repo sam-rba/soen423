@@ -41,7 +41,7 @@ class Receive<T extends MessagePayload> extends TotalOrderMulticast<T> implement
         while (!holdback.isEmpty()) {
             // Messages with lower sequence numbers are removed from the priority queue first.
             Message<T> msg = holdback.peek();
-            if (msg == null || msg.seq != seq+1)
+            if (msg == null || msg.seq != seq)
                 return;
 
             // This is the next element in the sequence; deliver it.
