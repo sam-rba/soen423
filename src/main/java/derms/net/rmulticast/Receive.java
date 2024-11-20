@@ -19,9 +19,9 @@ class Receive<T extends MessagePayload> implements Runnable {
     private static final Duration sockTimeout = Duration.ofMillis(500);
 
     private final ConcurrentMulticastSocket inSock;
-    private final Set<MessageID> acks;
-    private final Set<MessageID> nacks; // Positively acknowledged messages.
-    private final ReceivedSet<T> received; // Negatively acknowledged messages.
+    private final Set<MessageID> acks; // Positively acknowledged messages.
+    private final Set<MessageID> nacks; // Negatively acknowledged messages.
+    private final ReceivedSet<T> received;
     private final BlockingQueue<Message<T>> retransmissions;
     private final Set<InetAddress> groupMembers;
     private final BlockingQueue<Message<T>> delivered;
