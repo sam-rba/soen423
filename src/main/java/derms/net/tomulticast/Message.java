@@ -1,6 +1,6 @@
 package derms.net.tomulticast;
 
-import derms.net.rmulticast.MessagePayload;
+import derms.net.MessagePayload;
 
 class Message<T extends MessagePayload> implements MessagePayload, Comparable<Message<T>> {
     long seq; // Sequence number.

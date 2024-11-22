@@ -1,4 +1,4 @@
-package derms.net.rmulticast;
+package derms.net;
 
 import java.io.Serializable;
 

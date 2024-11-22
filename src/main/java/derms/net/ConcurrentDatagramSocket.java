@@ -1,10 +1,7 @@
 package derms.net;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 import java.time.Duration;
 
 public class ConcurrentDatagramSocket {
@@ -22,12 +19,20 @@ public class ConcurrentDatagramSocket {
         sock.connect(address, port);
     }
 
+    public synchronized void connect(InetSocketAddress addr) {
+        connect(addr.getAddress(), addr.getPort());
+    }
+
     public synchronized InetAddress getLocalAddress() {
         return sock.getLocalAddress();
     }
 
     public synchronized int getLocalPort() {
         return sock.getLocalPort();
+    }
+
+    public synchronized SocketAddress getRemoteSocketAddress() {
+        return sock.getRemoteSocketAddress();
     }
 
     public synchronized void receive(DatagramPacket p) throws IOException {

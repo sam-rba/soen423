@@ -1,5 +1,6 @@
 package derms.net.rmulticast;
 
+import derms.net.MessagePayload;
 import derms.util.Wait;
 
 import java.time.Duration;

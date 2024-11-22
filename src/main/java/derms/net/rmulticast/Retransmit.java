@@ -1,6 +1,7 @@
 package derms.net.rmulticast;
 
 import derms.net.ConcurrentMulticastSocket;
+import derms.net.MessagePayload;
 import derms.net.Packet;
 
 import java.net.DatagramPacket;

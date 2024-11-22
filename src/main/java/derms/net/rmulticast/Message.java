@@ -1,5 +1,7 @@
 package derms.net.rmulticast;
 
+import derms.net.MessagePayload;
+
 import java.io.Serializable;
 import java.net.InetAddress;
 

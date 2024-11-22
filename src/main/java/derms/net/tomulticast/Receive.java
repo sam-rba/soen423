@@ -1,6 +1,6 @@
 package derms.net.tomulticast;
 
-import derms.net.rmulticast.MessagePayload;
+import derms.net.MessagePayload;
 
 import java.io.IOException;
 import java.net.InetAddress;
