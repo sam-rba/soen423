@@ -16,6 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
+/** The sending end of a reliable unicast connection. */
 public class ReliableUnicastSender<T extends MessagePayload> {
     private static final Duration soTimeout = Duration.ofMillis(500); // Socket timeout.
 
@@ -27,9 +28,11 @@ public class ReliableUnicastSender<T extends MessagePayload> {
     private final ExecutorService pool;
 
     /**
-     * @param raddr Remote IP address to connect to.
+     * Connect to the specified address and port.
+     *
+     * @param raddr The remote IP address to connect to.
      */
-    ReliableUnicastSender(InetSocketAddress raddr) throws IOException {
+    public ReliableUnicastSender(InetSocketAddress raddr) throws IOException {
         this.next = new AtomicLong(0);
         this.unacked = new AtomicLong(0);
         this.sent = new LinkedBlockingQueue<Message<T>>();

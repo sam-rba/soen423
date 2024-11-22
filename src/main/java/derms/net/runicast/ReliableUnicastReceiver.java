@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
 
+/** The receiving end of a reliable unicast connection. */
 public class ReliableUnicastReceiver<T extends MessagePayload> {
     private static final Duration soTimeout = Duration.ofMillis(500); // Socket timeout.
 
@@ -19,9 +20,11 @@ public class ReliableUnicastReceiver<T extends MessagePayload> {
     private final ExecutorService pool;
 
     /**
+     * Listen for incoming messages on the specified address and port.
+     *
      * @param laddr The local IP address and port to listen on.
      */
-    ReliableUnicastReceiver(SocketAddress laddr) throws IOException {
+    public ReliableUnicastReceiver(SocketAddress laddr) throws IOException {
         this.sock = new ConcurrentDatagramSocket(laddr);
         this.sock.setSoTimeout(soTimeout);
         this.delivered = new LinkedBlockingQueue<T>();
