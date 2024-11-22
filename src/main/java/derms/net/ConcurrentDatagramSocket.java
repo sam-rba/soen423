@@ -7,8 +7,18 @@ import java.time.Duration;
 public class ConcurrentDatagramSocket {
     private final DatagramSocket sock;
 
+    /** Create a socket bound to any available port on the local machine. */
     public ConcurrentDatagramSocket() throws IOException {
         this.sock = new DatagramSocket();
+    }
+
+    /**
+     * Creates a socket bound to the specified address and port.
+     *
+     * @param laddr The local IP address and port to listen on.
+     */
+    public ConcurrentDatagramSocket(SocketAddress laddr) throws SocketException {
+        this.sock = new DatagramSocket(laddr);
     }
 
     public synchronized void close() {

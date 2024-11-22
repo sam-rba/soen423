@@ -3,6 +3,7 @@ package derms.net.rmulticast;
 import derms.net.ConcurrentMulticastSocket;
 import derms.net.MessagePayload;
 import derms.net.Packet;
+import derms.util.ThreadPool;
 
 import java.io.IOException;
 import java.net.*;
@@ -18,8 +19,6 @@ import java.util.logging.Logger;
  * Distributed Systems" in IEEE Transactions on Parallel and Distributed Systems, vol. 1, no. 1, 1990.
  */
 public class ReliableMulticast<T extends MessagePayload> {
-    private static final Duration terminationTimeout = Duration.ofSeconds(1);
-
     private final SocketAddress group;
     private final InetAddress laddr; // Local address.
     private final Set<MessageID> acks; // Positively acknowledged messages.
@@ -64,15 +63,7 @@ public class ReliableMulticast<T extends MessagePayload> {
 
     public void close() {
         log.info("Shutting down...");
-        pool.shutdownNow();
-        try {
-            if (!pool.awaitTermination(terminationTimeout.toMillis(), TimeUnit.MILLISECONDS))
-                log.warning("Thread pool did not terminate after " + terminationTimeout);
-        } catch (InterruptedException e) {
-            log.warning("Interrupted while terminating thread pool: " + e.getMessage());
-            // Preserve interrupt status.
-            Thread.currentThread().interrupt();
-        }
+        ThreadPool.shutDown(pool, log);
         outSock.close();
         log.info("Finished shutting down.");
     }
