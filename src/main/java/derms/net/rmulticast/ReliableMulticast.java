@@ -63,7 +63,7 @@ public class ReliableMulticast<T extends MessagePayload> {
 
     public void close() {
         log.info("Shutting down...");
-        ThreadPool.shutDown(pool, log);
+        ThreadPool.shutdownNow(pool, log);
         outSock.close();
         log.info("Finished shutting down.");
     }

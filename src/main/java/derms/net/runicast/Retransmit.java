@@ -1,12 +1,13 @@
 package derms.net.runicast;
 
-import derms.net.ConcurrentDatagramSocket;
+import derms.io.Serial;
 import derms.net.MessagePayload;
-import derms.net.Packet;
 import derms.util.Wait;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
+import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.DatagramChannel;
 import java.time.Duration;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicLong;
@@ -18,10 +19,10 @@ class Retransmit<T extends MessagePayload> implements Runnable {
 
     private final AtomicLong unacked;
     private final Queue<Message<T>> sent;
-    private final ConcurrentDatagramSocket sock;
+    private final DatagramChannel sock;
     private final Logger log;
 
-    Retransmit(AtomicLong unacked, Queue<Message<T>> sent, ConcurrentDatagramSocket sock) {
+    Retransmit(AtomicLong unacked, Queue<Message<T>> sent, DatagramChannel sock) {
         this.unacked = unacked;
         this.sent = sent;
         this.sock = sock;
@@ -40,15 +41,15 @@ class Retransmit<T extends MessagePayload> implements Runnable {
                     }
                 }
             }
-        } catch (InterruptedException e) {
-            log.info("Interrupted.");
+        } catch (InterruptedException | ClosedChannelException e) {
+            log.info("Shutting down.");
         }
     }
 
-    private void retransmit(Message<T> msg) {
+    private void retransmit(Message<T> msg) throws ClosedChannelException {
         try {
-            DatagramPacket pkt = Packet.encode(msg, sock.getRemoteSocketAddress());
-            sock.send(pkt);
+            ByteBuffer buf = Serial.encode(msg);
+            sock.send(buf, sock.getRemoteAddress());
             log.info("Retransmitted " + msg);
         } catch (IOException e) {
             log.warning("Failed to retransmit " + msg + ": " + e.getMessage());
