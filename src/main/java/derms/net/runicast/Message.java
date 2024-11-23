@@ -3,7 +3,6 @@ package derms.net.runicast;
 import derms.net.MessagePayload;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 
 class Message<T extends MessagePayload> implements Serializable {
     final long seq; // Sequence number.
