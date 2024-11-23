@@ -21,3 +21,4 @@ sequencer?
 test reliable multicast
 test total-order multicast
 test reliable unicast
+adapt replica code from assignment
