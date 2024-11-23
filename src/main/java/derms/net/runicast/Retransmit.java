@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 /** Retransmit unacknowledged messages. */
 class Retransmit<T extends MessagePayload> implements Runnable {
-    private static final Duration timeout = Duration.ofMillis(500);
+    private static final Duration period = Duration.ofMillis(500);
 
     private final AtomicLong unacked;
     private final Queue<Message<T>> sent;
@@ -31,28 +31,27 @@ class Retransmit<T extends MessagePayload> implements Runnable {
 
     @Override
     public void run() {
-        try {
-            for (;;) {
-                Wait.forDuration(timeout);
+        for (;;) {
+            try {
+                Wait.forDuration(period);
 
                 for (Message<T> msg : sent) {
                     if (msg.seq >= unacked.get()) {
                         retransmit(msg);
                     }
                 }
+            } catch (InterruptedException | ClosedChannelException e) {
+                log.info("Shutting down.");
+                return;
+            } catch (IOException e) {
+                log.warning(e.getMessage());
             }
-        } catch (InterruptedException | ClosedChannelException e) {
-            log.info("Shutting down.");
         }
     }
 
-    private void retransmit(Message<T> msg) throws ClosedChannelException {
-        try {
-            ByteBuffer buf = Serial.encode(msg);
-            sock.send(buf, sock.getRemoteAddress());
-            log.info("Retransmitted " + msg);
-        } catch (IOException e) {
-            log.warning("Failed to retransmit " + msg + ": " + e.getMessage());
-        }
+    private void retransmit(Message<T> msg) throws IOException {
+        ByteBuffer buf = Serial.encode(msg);
+        sock.send(buf, sock.getRemoteAddress());
+        log.info("Retransmitted " + msg);
     }
 }
