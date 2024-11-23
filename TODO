@@ -8,6 +8,8 @@ A line with no prefix is an incomplete task.
 * finalize client<->FE comm in dataflow diagram (CORBA/web)
 * assign roles
 * reliable multicast
+* total-order multicast
+* reliable unicast
 
 active replication
 high availability
@@ -15,7 +17,7 @@ fault tolerance
 front end
 replica manager
 tests
-total order multicast (sequencer)
+sequencer?
 test reliable multicast
-reliable unicast
+test total-order multicast
 test reliable unicast
