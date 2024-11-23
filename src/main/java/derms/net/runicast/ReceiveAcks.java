@@ -29,8 +29,9 @@ class ReceiveAcks<T extends MessagePayload> implements Runnable {
 
     @Override
     public void run() {
+        ByteBuffer buf = ByteBuffer.allocate(bufSize);
         for (;;) {
-            ByteBuffer buf = ByteBuffer.allocate(bufSize);
+            buf.clear();
             try {
                 sock.receive(buf);
                 Ack ack = Serial.decode(buf, Ack.class);

@@ -28,8 +28,9 @@ class Receive<T extends MessagePayload> implements Runnable {
 
     @Override
     public void run() {
+        ByteBuffer buf = ByteBuffer.allocate(bufSize);
         for (;;) {
-            ByteBuffer buf = ByteBuffer.allocate(bufSize);
+            buf.clear();
             try {
                 SocketAddress sender = sock.receive(buf);
                 Message<T> msg = (Message<T>) Serial.decode(buf, Message.class);
