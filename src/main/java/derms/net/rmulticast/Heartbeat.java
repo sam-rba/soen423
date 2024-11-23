@@ -1,13 +1,14 @@
 package derms.net.rmulticast;
 
-import derms.net.ConcurrentMulticastSocket;
-import derms.net.Packet;
+import derms.io.Serial;
 import derms.util.Wait;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.DatagramChannel;
 import java.time.Duration;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -23,31 +24,30 @@ class Heartbeat implements Runnable {
     private final InetSocketAddress group;
     private final InetAddress laddr;
     private final Set<MessageID> acks, nacks;
-    private final ConcurrentMulticastSocket outSock;
+    private final DatagramChannel sock;
     private final Logger log;
 
-    Heartbeat(InetSocketAddress group, InetAddress laddr, Set<MessageID> acks, Set<MessageID> nacks, ConcurrentMulticastSocket outSock) throws IOException {
+    Heartbeat(InetSocketAddress group, InetAddress laddr, Set<MessageID> acks, Set<MessageID> nacks, DatagramChannel sock) throws IOException {
         this.group = group;
         this.laddr = laddr;
         this.acks = acks;
         this.nacks = nacks;
-        this.outSock = outSock;
+        this.sock = sock;
         this.log = Logger.getLogger(this.getClass().getName());
     }
 
     @Override
     public void run() {
-        try {
-            for (;;) {
-                try {
-                    Wait.forDuration(period);
-                    send();
-                } catch (IOException e) {
-                    log.warning(e.getMessage());
-                }
+        for (;;) {
+            try {
+                Wait.forDuration(period);
+                send();
+            } catch (InterruptedException | ClosedChannelException e) {
+                log.info("Shutting down.");
+                return;
+            } catch (IOException e) {
+                log.warning(e.getMessage());
             }
-        } catch (InterruptedException e) {
-            log.info("Interrupted. Shutting down.");
         }
     }
 
@@ -56,8 +56,8 @@ class Heartbeat implements Runnable {
                 laddr,
                 acks.toArray(new MessageID[0]),
                 nacks.toArray(new MessageID[0]));
-        DatagramPacket pkt = Packet.encode(msg, group);
-        outSock.send(pkt);
+        ByteBuffer buf = Serial.encode(msg);
+        sock.send(buf, group);
         acks.clear();
     }
 }

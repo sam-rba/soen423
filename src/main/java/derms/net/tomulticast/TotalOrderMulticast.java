@@ -37,7 +37,7 @@ public abstract class TotalOrderMulticast<T extends MessagePayload> {
     }
 
     /** Close the underlying socket. */
-    public void close() {
+    public void close() throws IOException {
         sock.close();
     }
 
