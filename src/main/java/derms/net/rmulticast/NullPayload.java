@@ -7,4 +7,7 @@ class NullPayload implements MessagePayload {
     public int hash() {
         return -1;
     }
+
+    @Override
+    public String toString() { return getClass().getSimpleName(); }
 }
