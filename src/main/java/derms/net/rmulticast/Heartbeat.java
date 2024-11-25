@@ -1,7 +1,6 @@
 package derms.net.rmulticast;
 
 import derms.io.Serial;
-import derms.util.Wait;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -40,7 +39,7 @@ class Heartbeat implements Runnable {
     public void run() {
         for (;;) {
             try {
-                Wait.forDuration(period);
+                Thread.sleep(period.toMillis());
                 send();
             } catch (InterruptedException | ClosedChannelException e) {
                 log.info("Shutting down.");

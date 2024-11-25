@@ -1,7 +1,6 @@
 package derms.net.rmulticast;
 
 import derms.net.MessagePayload;
-import derms.util.Wait;
 
 import java.net.InetAddress;
 import java.time.Duration;
@@ -28,8 +27,8 @@ class Prune<T extends MessagePayload> implements Runnable {
     @Override
     public void run() {
         try {
-            for (; ; ) {
-                Wait.forDuration(period);
+            for (;;) {
+                Thread.sleep(period.toMillis());
                 prune();
             }
         } catch (InterruptedException e) {

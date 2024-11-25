@@ -2,7 +2,6 @@ package derms.net.runicast;
 
 import derms.io.Serial;
 import derms.net.MessagePayload;
-import derms.util.Wait;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -33,7 +32,7 @@ class Retransmit<T extends MessagePayload> implements Runnable {
     public void run() {
         for (;;) {
             try {
-                Wait.forDuration(period);
+                Thread.sleep(period.toMillis());
 
                 for (Message<T> msg : sent) {
                     if (msg.seq >= unacked.get()) {

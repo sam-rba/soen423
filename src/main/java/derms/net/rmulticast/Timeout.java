@@ -1,7 +1,6 @@
 package derms.net.rmulticast;
 
 import derms.net.MessagePayload;
-import derms.util.Wait;
 
 import java.time.Duration;
 import java.util.Set;
@@ -31,7 +30,7 @@ class Timeout<T extends MessagePayload> implements Runnable {
     public void run() {
         try {
             for (;;) {
-                Wait.forDuration(timeout);
+                Thread.sleep(timeout.toMillis());
                 if (acks.contains(msg.id())) {
                     log.info("Message " + msg.id() + "positively ack'ed.");
                     return;
