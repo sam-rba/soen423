@@ -2,8 +2,8 @@ package derms.replica.replica1;
 
 import java.net.InetAddress;
 import java.util.Collection;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Servers {
 	private Map<City, InetAddress> servers = new ConcurrentHashMap<City, InetAddress>();

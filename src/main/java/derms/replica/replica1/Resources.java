@@ -1,10 +1,10 @@
 package derms.replica.replica1;
 
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Resources {
 	private Map<ResourceName, Map<ResourceID, Resource>> resources;

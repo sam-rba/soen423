@@ -3,11 +3,7 @@ package derms.replica.replica1;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.MulticastSocket;
-import java.net.NetworkInterface;
+import java.net.*;
 import java.util.logging.Logger;
 
 public class AnnounceListener implements Runnable {

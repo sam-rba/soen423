@@ -2,15 +2,11 @@ package derms.replica.replica1;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutorService;
-import java.util.logging.Logger;
+import java.net.*;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 public class RequestResource {
 	public static final int port = 5557;

@@ -3,7 +3,6 @@ package derms.replica.replica1;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 public class Hosts {
     private static Map<City, String> hosts = null;

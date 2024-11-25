@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-import java.util.NoSuchElementException;
 
 public class ResponderServer {
 	public static final Duration timeout = Duration.ofSeconds(5);

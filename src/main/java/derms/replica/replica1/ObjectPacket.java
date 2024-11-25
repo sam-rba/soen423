@@ -1,11 +1,6 @@
 package derms.replica.replica1;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.net.DatagramPacket;
 import java.net.SocketAddress;
 
