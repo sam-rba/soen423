@@ -9,10 +9,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-import javax.jws.WebService;
 
-@WebService(endpointInterface = "xyz.samanthony.derms.Coordinator")
-public class CoordinatorServer implements Coordinator {
+public class CoordinatorServer {
 	public static final Duration timeout = Duration.ofSeconds(5);
 
 	private City city;
@@ -32,7 +30,6 @@ public class CoordinatorServer implements Coordinator {
 		this(new City(), new Resources(), new Servers());
 	}
 
-	@Override
 	public void requestResource(CoordinatorID cid, ResourceID rid, int duration)
 			throws ServerCommunicationError, NoSuchResourceException,
 			AlreadyBorrowedException, InvalidDurationException
@@ -70,7 +67,6 @@ public class CoordinatorServer implements Coordinator {
 		}
 	}
 
-	@Override
 	public Resource[] findResource(CoordinatorID cid, ResourceName rname) throws ServerCommunicationError {
 		log.info("Find Resource "+rname+" from "+cid);
 		FindResource.Request request = new FindResource.Request(cid, rname);
@@ -106,7 +102,6 @@ public class CoordinatorServer implements Coordinator {
 		return arr;
 	}
 
-	@Override
 	public void returnResource(CoordinatorID cid, ResourceID rid)
 			throws ServerCommunicationError, NoSuchResourceException, NotBorrowedException
 	{
@@ -144,7 +139,6 @@ public class CoordinatorServer implements Coordinator {
 		}
 	}
 
-	@Override
 	public void swapResource(CoordinatorID cid, ResourceID oldRID, ResourceID newRID) throws ServerCommunicationError, NoSuchResourceException {
 		log.info(cid+": swap "+oldRID+", "+newRID);
 

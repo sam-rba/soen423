@@ -10,10 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.NoSuchElementException;
-import javax.jws.WebService;
 
-@WebService(endpointInterface = "xyz.samanthony.derms.Responder")
-public class ResponderServer implements Responder {
+public class ResponderServer {
 	public static final Duration timeout = Duration.ofSeconds(5);
 
 	private City city;
@@ -32,13 +30,11 @@ public class ResponderServer implements Responder {
 		this(new City(), new Resources(), new Servers());
 	}
 
-	@Override
 	public void addResource(Resource r) {
 		resources.add(r);
 		log.info("Added resource "+r+" - success");
 	}
 
-	@Override
 	public void removeResource(ResourceID rid, int duration) throws NoSuchResourceException {
 		log.info("Remove duration "+duration+" from "+rid);
 		try {
@@ -66,7 +62,6 @@ public class ResponderServer implements Responder {
 		}
 	}
 
-	@Override
 	public Resource[] listResourceAvailability(ResourceName rname) throws ServerCommunicationError {
 		log.info("Request for available "+rname);
 		Collection<Resource> availableResources = ConcurrentHashMap.newKeySet();

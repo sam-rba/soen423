@@ -7,12 +7,10 @@ import java.net.UnknownHostException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
-import javax.xml.ws.Endpoint;
 
 public class StationServer implements Runnable {
 	public static final String usage = "Usage: java StationServer <city> <local address>";
 	public static final InetSocketAddress announceGroup = new InetSocketAddress("225.5.5.5", 5555);
-	public static final int publishPort = 8080;
 
 	public City city;
 	public InetAddress localAddr;
@@ -100,14 +98,6 @@ public class StationServer implements Runnable {
 			log.severe("Failed to start SwapResource Server: "+e.getMessage());
 			return;
 		}
-
-		String url = "http://"+localAddr.getHostAddress()+":"+publishPort+"/"+Responder.class.getSimpleName();
-		log.info("Publishing Responder to '"+url+"'...");
-		Endpoint.publish(url, responderServer);
-
-		url = "http://"+localAddr.getHostAddress()+":"+publishPort+"/"+Coordinator.class.getSimpleName();
-		log.info("Publishing Coordinator to '"+url+"'...");
-		Endpoint.publish(url, coordinatorServer);
 
 		try {
 			pool.execute(new Announcer(announceGroup, localAddr, city));
