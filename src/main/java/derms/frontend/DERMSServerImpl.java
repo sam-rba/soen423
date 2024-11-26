@@ -22,8 +22,7 @@ import javax.jws.soap.SOAPBinding.Style;
 //import validation.ValidationService;
 //import interfaces.DERMSInterface;
 
-@WebService(endpointInterface = "frontend.DERMSInterface")
-@SOAPBinding(style = Style.RPC)
+@WebService(endpointInterface = "derms.frontend.DERMSInterface")
 public class DERMSServerImpl implements DERMSInterface {
 	
     private static long DYNAMIC_TIMEOUT = 10000;
@@ -38,15 +37,19 @@ public class DERMSServerImpl implements DERMSInterface {
     private long responseTime = DYNAMIC_TIMEOUT;
     private long startTime;
     private CountDownLatch latch;
-    private final FEInterface inter;
+    private FEInterface inter = null;
     private final List<RmResponse> responses = new ArrayList<>();
+
+    public DERMSServerImpl() {
+        super();
+    }
     
     public DERMSServerImpl(FEInterface inter) {
         super();
         this.inter = inter;
     }
     
-	@WebMethod
+	@Override
     public synchronized String addResource(String resourceID, String resourceName, int duration) {
         MyRequest myRequest = new MyRequest("addResource", "");
         myRequest.setResourceID(resourceID);
@@ -57,7 +60,7 @@ public class DERMSServerImpl implements DERMSInterface {
         return validateResponses(myRequest);
     }
 
-	@WebMethod
+	@Override
     public synchronized String removeResource(String resourceID, int duration) {
         MyRequest myRequest = new MyRequest("removeResource", "");
         myRequest.setResourceID(resourceID);
@@ -67,7 +70,7 @@ public class DERMSServerImpl implements DERMSInterface {
         return validateResponses(myRequest);
     }
 
-	@WebMethod
+	@Override
     public synchronized String listResourceAvailability(String resourceName) {
         MyRequest myRequest = new MyRequest("listEventAvailability", "");
         myRequest.setResourceType(resourceName);
@@ -76,7 +79,7 @@ public class DERMSServerImpl implements DERMSInterface {
         return validateResponses(myRequest);
     }
 
-	@WebMethod
+	@Override
     public synchronized String requestResource(String coordinatorID, String resourceID, int duration) {
         MyRequest myRequest = new MyRequest("requestResource", coordinatorID);
         myRequest.setResourceID(resourceID);
@@ -86,7 +89,7 @@ public class DERMSServerImpl implements DERMSInterface {
         return validateResponses(myRequest);
     }
 	
-	@WebMethod
+	@Override
     public synchronized String findResource(String coordinatorID, String resourceName) {
         MyRequest myRequest = new MyRequest("findResource", coordinatorID);
         myRequest.setResourceType(resourceName);
@@ -95,7 +98,7 @@ public class DERMSServerImpl implements DERMSInterface {
         return validateResponses(myRequest);
     }
 	
-	@WebMethod
+	@Override
     public synchronized String returnResource(String coordinatorID, String resourceID) {
         MyRequest myRequest = new MyRequest("findResource", coordinatorID);
         myRequest.setResourceID(resourceID);
@@ -104,7 +107,7 @@ public class DERMSServerImpl implements DERMSInterface {
         return validateResponses(myRequest);
     }
 
-	@WebMethod
+	@Override
     public synchronized String swapResource(String coordinatorID, String oldResourceID, String oldResourceType, String newResourceID, String newResourceType) {
         MyRequest myRequest = new MyRequest("swapResource", coordinatorID);
         myRequest.setResourceID(newResourceID);
