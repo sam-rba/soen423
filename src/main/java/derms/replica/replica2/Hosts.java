@@ -1,4 +1,4 @@
-package derms.replica.replica1;
+package derms.replica.replica2;
 
 import java.net.UnknownHostException;
 import java.util.HashMap;
