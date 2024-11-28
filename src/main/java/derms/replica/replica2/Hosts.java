@@ -4,10 +4,10 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Hosts {
+class Hosts {
     private static Map<City, String> hosts = null;
 
-    public static String get(City city) throws UnknownHostException {
+    static String get(City city) throws UnknownHostException {
         if (hosts == null)
             init();
 

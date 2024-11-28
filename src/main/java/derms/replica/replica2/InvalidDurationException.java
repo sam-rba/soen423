@@ -1,7 +1,7 @@
 package derms.replica.replica2;
 
-public class InvalidDurationException extends Exception {
-  public InvalidDurationException (String message) {
+class InvalidDurationException extends Exception {
+  InvalidDurationException (String message) {
     super(message);
   }
 }

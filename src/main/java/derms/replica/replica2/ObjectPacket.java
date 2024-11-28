@@ -4,8 +4,8 @@ import java.io.*;
 import java.net.DatagramPacket;
 import java.net.SocketAddress;
 
-public class ObjectPacket {
-	public static DatagramPacket create(Serializable obj, SocketAddress remoteAddr) throws IOException {
+class ObjectPacket {
+	static DatagramPacket create(Serializable obj, SocketAddress remoteAddr) throws IOException {
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		ObjectOutputStream objStream = new ObjectOutputStream(byteStream);
 		objStream.writeObject(obj);
@@ -15,7 +15,7 @@ public class ObjectPacket {
 		return new DatagramPacket(buf, buf.length, remoteAddr);
 	}
 
-	public static <E> E deserialize(DatagramPacket pkt, Class<E> clazz) throws IOException {
+	static <E> E deserialize(DatagramPacket pkt, Class<E> clazz) throws IOException {
 		ObjectInputStream objectStream;
 		try {
 			objectStream = new ObjectInputStream(

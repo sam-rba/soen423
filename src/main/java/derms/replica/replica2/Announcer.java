@@ -4,15 +4,15 @@ import java.io.IOException;
 import java.net.*;
 import java.util.logging.Logger;
 
-public class Announcer implements Runnable {
-	public static final long intervalMillis = 3000;
+class Announcer implements Runnable {
+	static final long intervalMillis = 3000;
 
 	private SocketAddress group;
 	private InetAddress localAddr;
 	private City city;
 	private Logger log;
 
-	public Announcer(SocketAddress group, InetAddress localAddr, City city) throws IOException {
+	Announcer(SocketAddress group, InetAddress localAddr, City city) throws IOException {
 		this.group = group;
 		this.localAddr = localAddr;
 		this.city = city;

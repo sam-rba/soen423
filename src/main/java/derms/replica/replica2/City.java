@@ -2,18 +2,18 @@ package derms.replica.replica2;
 
 import java.io.Serializable;
 
-public class City implements Serializable {
-	public static final int codeLen = 3;
+class City implements Serializable {
+	static final int codeLen = 3;
 
 	private String code;
 
-	public City(String code) throws IllegalArgumentException {
+	City(String code) throws IllegalArgumentException {
 		if (code.length() != codeLen)
 			throw new IllegalArgumentException("Invalid city: "+code+"; must be "+codeLen+" letters");
 		this.code = code;
 	}
 
-	public City() {
+	City() {
 		this("XXX");
 	}
 

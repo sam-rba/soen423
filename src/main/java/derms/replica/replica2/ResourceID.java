@@ -2,20 +2,20 @@ package derms.replica.replica2;
 
 import java.io.Serializable;
 
-public class ResourceID implements Serializable {
-  public String city;
-  public short num;
+class ResourceID implements Serializable {
+  String city;
+  short num;
 
-  public ResourceID (String city, short num) {
+  ResourceID (String city, short num) {
     this.city = city;
     this.num = num;
   }
 
-  public ResourceID() {
+  ResourceID() {
     this("XXX", (short) 1111);
   }
 
-  public static ResourceID parse(String s) throws IllegalArgumentException {
+  static ResourceID parse(String s) throws IllegalArgumentException {
     if (s.length() != City.codeLen+ID.nDigits) {
       throw new IllegalArgumentException("invalid resource ID: "+s);
     }

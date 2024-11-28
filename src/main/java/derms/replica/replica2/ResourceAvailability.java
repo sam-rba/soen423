@@ -8,16 +8,16 @@ import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-public class ResourceAvailability {
-	public static final int port = 5556;
+class ResourceAvailability {
+	static final int port = 5556;
 
-	public static class Client implements Runnable {
+	static class Client implements Runnable {
 		private InetAddress serverAddr;
 		private ResourceType request;
 		private Collection<Resource> resources;
 		private Logger log;
 
-		public Client(InetAddress serverAddr, ResourceType request, Collection<Resource> response) throws IOException {
+		Client(InetAddress serverAddr, ResourceType request, Collection<Resource> response) throws IOException {
 			this.serverAddr = serverAddr;
 			this.request = request;
 			this.resources = response;
@@ -69,14 +69,14 @@ public class ResourceAvailability {
 		}
 	}
 
-	public static class Server implements Runnable {
-		public static final int bufsize = 1024;
+	static class Server implements Runnable {
+		static final int bufsize = 1024;
 
 		private InetAddress localAddr;
 		private Resources resources;
 		private Logger log;
 
-		public Server(InetAddress localAddr, Resources resources) throws IOException {
+		Server(InetAddress localAddr, Resources resources) throws IOException {
 			this.localAddr = localAddr;
 			this.resources = resources;
 			this.log = DermsLogger.getLogger(this.getClass());

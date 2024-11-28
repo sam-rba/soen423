@@ -5,11 +5,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Servers {
+class Servers {
 	private Map<City, InetAddress> servers = new ConcurrentHashMap<City, InetAddress>();
 
 	/** Returns the address of the server located in the specified city, or null if there is no server in the city. */
-	public InetAddress get(City city) {
+	InetAddress get(City city) {
 		return servers.get(city);
 	}
 
@@ -20,15 +20,15 @@ public class Servers {
 	 * @param addr the address of the server
 	 * @return the previous server address, or null if there was no server associated with this city.
 	 */
-	public InetAddress put(City city, InetAddress addr) {
+	InetAddress put(City city, InetAddress addr) {
 		return servers.put(city, addr);
 	}
 
-	public Collection<InetAddress> all() {
+	Collection<InetAddress> all() {
 		return servers.values();
 	}
 
-	public int size() {
+	int size() {
 		return servers.size();
 	}
 }

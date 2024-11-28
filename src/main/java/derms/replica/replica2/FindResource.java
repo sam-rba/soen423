@@ -9,16 +9,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
-public class FindResource {
-	public static final int port = 5558;
+class FindResource {
+	static final int port = 5558;
 
-	public static class Client implements Runnable {
+	static class Client implements Runnable {
 		private InetAddress serverAddr;
 		private Request request;
 		private Collection<Resource> response;
 		private Logger log;
 
-		public Client(Request request, InetAddress serverAddr, Collection<Resource> response) throws IOException {
+		Client(Request request, InetAddress serverAddr, Collection<Resource> response) throws IOException {
 			this.serverAddr = serverAddr;
 			this.request = request;
 			this.response = response;
@@ -68,7 +68,7 @@ public class FindResource {
 		}
 	}
 
-	public static class Server implements Runnable {
+	static class Server implements Runnable {
 		private static final int bufsize = 4096;
 
 		private InetAddress localAddr;
@@ -76,7 +76,7 @@ public class FindResource {
 		private ExecutorService pool;
 		private Logger log;
 
-		public Server(InetAddress localAddr, Resources resources) throws IOException {
+		Server(InetAddress localAddr, Resources resources) throws IOException {
 			this.localAddr = localAddr;
 			this.resources = resources;
 			this.pool = Executors.newWorkStealingPool();
@@ -122,11 +122,11 @@ public class FindResource {
 		}
 	}
 
-	public static class Request implements Serializable {
+	static class Request implements Serializable {
 		private CoordinatorID cid;
 		private ResourceType rname;
 
-		public Request(CoordinatorID cid, ResourceType rname) {
+		Request(CoordinatorID cid, ResourceType rname) {
 			this.cid = cid;
 			this.rname = rname;
 		}

@@ -2,16 +2,16 @@ package derms.replica.replica2;
 
 import java.io.Serializable;
 
-public class CoordinatorID implements Serializable {
-  public String city;
-  public short num;
+class CoordinatorID implements Serializable {
+  String city;
+  short num;
 
-  public CoordinatorID(String city, short num) {
+  CoordinatorID(String city, short num) {
     this.city = city;
     this.num = num;
   }
 
-  public static CoordinatorID parse(String str) throws IllegalArgumentException {
+  static CoordinatorID parse(String str) throws IllegalArgumentException {
     if (str.length() != City.codeLen+ID.nDigits)
       throw new IllegalArgumentException("illegal coordinator ID: " + str);
 

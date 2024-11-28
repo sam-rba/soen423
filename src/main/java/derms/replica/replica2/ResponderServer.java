@@ -11,31 +11,31 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-public class ResponderServer {
-	public static final Duration timeout = Duration.ofSeconds(5);
+class ResponderServer {
+	static final Duration timeout = Duration.ofSeconds(5);
 
 	private City city;
 	private Resources resources;
 	private Servers servers;
 	private Logger log;
 
-	public ResponderServer(City city, Resources resources, Servers servers) throws IOException {
+	ResponderServer(City city, Resources resources, Servers servers) throws IOException {
 		this.city = city;
 		this.resources = resources;
 		this.servers = servers;
 		this.log = DermsLogger.getLogger(this.getClass());
 	}
 
-	public ResponderServer() throws IOException {
+	ResponderServer() throws IOException {
 		this(new City(), new Resources(), new Servers());
 	}
 
-	public void addResource(Resource r) {
+	void addResource(Resource r) {
 		resources.add(r);
 		log.info("Added resource "+r+" - success");
 	}
 
-	public void removeResource(ResourceID rid, int duration) throws NoSuchResourceException {
+	void removeResource(ResourceID rid, int duration) throws NoSuchResourceException {
 		log.info("Remove duration "+duration+" from "+rid);
 		try {
 			Resource resource = resources.getByID(rid);
@@ -62,7 +62,7 @@ public class ResponderServer {
 		}
 	}
 
-	public Resource[] listResourceAvailability(ResourceType rname) throws ServerCommunicationError {
+	Resource[] listResourceAvailability(ResourceType rname) throws ServerCommunicationError {
 		log.info("Request for available "+rname);
 		Collection<Resource> availableResources = ConcurrentHashMap.newKeySet();
 		ExecutorService pool = Executors.newFixedThreadPool(servers.size());

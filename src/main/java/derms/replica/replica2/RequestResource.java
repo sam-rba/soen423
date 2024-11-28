@@ -8,22 +8,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
-public class RequestResource {
-	public static final int port = 5557;
-	public static final int bufsize = 4096;
+class RequestResource {
+	static final int port = 5557;
+	static final int bufsize = 4096;
 
-	public static class Client {
+	static class Client {
 		private CoordinatorID coordinatorID;
 		private ResourceID resourceID;
 		private int duration;
 
-		public Client(CoordinatorID coordinatorID, ResourceID resourceID, int duration) {
+		Client(CoordinatorID coordinatorID, ResourceID resourceID, int duration) {
 			this.coordinatorID = coordinatorID;
 			this.resourceID = resourceID;
 			this.duration = duration;
 		}
 
-		public Response sendRequest(InetAddress serverAddr) throws IOException {
+		Response sendRequest(InetAddress serverAddr) throws IOException {
 			Request request = new Request(coordinatorID, resourceID, duration);
 			DatagramSocket sock;
 			try {
@@ -61,13 +61,13 @@ public class RequestResource {
 		}
 	}
 
-	public static class Server implements Runnable {
+	static class Server implements Runnable {
 		private InetAddress localAddr;
 		private Resources resources;
 		private ExecutorService pool;
 		private Logger log;
 
-		public Server(InetAddress localAddr, Resources resources) throws IOException {
+		Server(InetAddress localAddr, Resources resources) throws IOException {
 			this.localAddr = localAddr;
 			this.resources = resources;
 			pool = Executors.newWorkStealingPool();
@@ -202,9 +202,9 @@ public class RequestResource {
 		}
 	}
 
-	public static class Response implements Serializable {
-		public Status status;
-		public String message;
+	static class Response implements Serializable {
+		Status status;
+		String message;
 
 		private Response(Status status, String message) {
 			this.status = status;

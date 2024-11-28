@@ -1,7 +1,7 @@
 package derms.replica.replica2;
 
-public  class NotBorrowedException extends Exception {
-  public NotBorrowedException (String message) {
+class NotBorrowedException extends Exception {
+  NotBorrowedException (String message) {
     super(message);
   }
 }

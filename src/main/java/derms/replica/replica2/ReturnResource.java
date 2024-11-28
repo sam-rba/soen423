@@ -8,20 +8,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
-public class ReturnResource {
+class ReturnResource {
 	public static final int port = 5559;
 	public static final int bufsize = 4096;
 
-	public static class Client {
+	static class Client {
 		private CoordinatorID coordinatorID;
 		private ResourceID resourceID;
 
-		public Client(CoordinatorID cid, ResourceID rid) {
+		Client(CoordinatorID cid, ResourceID rid) {
 			this.coordinatorID = cid;
 			this.resourceID = rid;
 		}
 
-		public Response sendRequest(InetAddress serverAddr) throws IOException {
+		Response sendRequest(InetAddress serverAddr) throws IOException {
 			Request request = new Request(coordinatorID, resourceID);
 			DatagramSocket sock;
 			try {
@@ -59,13 +59,13 @@ public class ReturnResource {
 		}
 	}
 
-	public static class Server implements Runnable {
+	static class Server implements Runnable {
 		private InetAddress localAddr;
 		private Resources resources;
 		private ExecutorService pool;
 		private Logger log;
 
-		public Server(InetAddress localAddr, Resources resources) throws IOException {
+		Server(InetAddress localAddr, Resources resources) throws IOException {
 			this.localAddr = localAddr;
 			this.resources = resources;
 			pool = Executors.newWorkStealingPool();
@@ -179,16 +179,16 @@ public class ReturnResource {
 		}
 	}
 
-	public static class Response implements Serializable {
-		public Status status;
-		public String message;
+	static class Response implements Serializable {
+		Status status;
+		String message;
 
 		private Response(Status status, String message) {
 			this.status = status;
 			this.message = message;
 		}
 
-		public enum Status {
+		enum Status {
 			SUCCESS, NO_SUCH_RESOURCE, NOT_BORROWED
 		}
 	}

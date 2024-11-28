@@ -1,7 +1,7 @@
 package derms.replica.replica2;
 
-public  class NoSuchResourceException extends Exception {
-  public NoSuchResourceException(String message) {
+class NoSuchResourceException extends Exception {
+  NoSuchResourceException(String message) {
     super(message);
   }
 }

@@ -8,22 +8,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
-public class SwapResource {
-	public static final int port = 5560;
-	public static final int bufSize = 4096;
+class SwapResource {
+	static final int port = 5560;
+	static final int bufSize = 4096;
 
-	public static class Client {
+	static class Client {
 		private CoordinatorID cid;
 		private ResourceID oldRID;
 		private ResourceID newRID;
 
-		public Client(CoordinatorID cid, ResourceID oldRID, ResourceID newRID) {
+		Client(CoordinatorID cid, ResourceID oldRID, ResourceID newRID) {
 			this.cid = cid;
 			this.oldRID = oldRID;
 			this.newRID = newRID;
 		}
 
-		public Response sendRequest(InetAddress serverAddr) throws IOException {
+		Response sendRequest(InetAddress serverAddr) throws IOException {
 			Request request = new Request(cid, oldRID, newRID);
 			DatagramSocket sock;
 			try {
@@ -61,14 +61,14 @@ public class SwapResource {
 		}
 	}
 
-	public static class Server implements Runnable {
+	static class Server implements Runnable {
 		private InetAddress localAddr;
 		private Resources resources;
 		private Servers servers;
 		private ExecutorService pool;
 		private Logger log;
 
-		public Server(InetAddress localAddr, Resources resources, Servers servers) throws IOException {
+		Server(InetAddress localAddr, Resources resources, Servers servers) throws IOException {
 			this.localAddr = localAddr;
 			this.resources = resources;
 			this.servers = servers;
@@ -224,16 +224,16 @@ public class SwapResource {
 		}
 	}
 
-	public static class Response implements Serializable {
-		public Status status;
-		public String message;
+	static class Response implements Serializable {
+		Status status;
+		String message;
 
 		private Response(Status status, String message) {
 			this.status = status;
 			this.message = message;
 		}
 
-		public enum Status {
+		enum Status {
 			SUCCESS,
 			FAILURE,
 			NO_SUCH_RESOURCE,

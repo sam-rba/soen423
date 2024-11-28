@@ -1,10 +1,10 @@
 package derms.replica.replica2;
 
-public class ResponderID {
-	public City city;
-	public short num;
+class ResponderID {
+	City city;
+	short num;
 
-	public ResponderID(City city, short num) {
+	ResponderID(City city, short num) {
 		this.city = city;
 		this.num = num;
 	}

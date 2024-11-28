@@ -13,12 +13,12 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 public class Replica2 implements Replica {
-	public static final InetSocketAddress announceGroup = new InetSocketAddress("225.5.5.5", 5555);
+	static final InetSocketAddress announceGroup = new InetSocketAddress("225.5.5.5", 5555);
 
-	public final City city;
-	public final InetAddress localAddr;
-	public final Resources resources;
-	public final Servers servers;
+	final City city;
+	final InetAddress localAddr;
+	final Resources resources;
+	final Servers servers;
 	private final Logger log;
 	private final ResponderServer responderServer;
 	private final CoordinatorServer coordinatorServer;

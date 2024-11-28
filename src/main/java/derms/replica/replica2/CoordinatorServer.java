@@ -10,15 +10,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-public class CoordinatorServer {
-	public static final Duration timeout = Duration.ofSeconds(5);
+class CoordinatorServer {
+	static final Duration timeout = Duration.ofSeconds(5);
 
 	private City city;
 	private Resources resources;
 	private Servers servers;
 	private Logger log;
 
-	public CoordinatorServer(City city, Resources resources, Servers servers) throws IOException {
+	CoordinatorServer(City city, Resources resources, Servers servers) throws IOException {
 		super();
 		this.city = city;
 		this.resources = resources;
@@ -26,11 +26,11 @@ public class CoordinatorServer {
 		this.log = DermsLogger.getLogger(this.getClass());
 	}
 
-	public CoordinatorServer() throws IOException {
+	CoordinatorServer() throws IOException {
 		this(new City(), new Resources(), new Servers());
 	}
 
-	public void requestResource(CoordinatorID cid, ResourceID rid, int duration)
+	void requestResource(CoordinatorID cid, ResourceID rid, int duration)
 			throws ServerCommunicationError, NoSuchResourceException,
 			AlreadyBorrowedException, InvalidDurationException
 	{
@@ -67,7 +67,7 @@ public class CoordinatorServer {
 		}
 	}
 
-	public Resource[] findResource(CoordinatorID cid, ResourceType rname) throws ServerCommunicationError {
+	Resource[] findResource(CoordinatorID cid, ResourceType rname) throws ServerCommunicationError {
 		log.info("Find Resource "+rname+" from "+cid);
 		FindResource.Request request = new FindResource.Request(cid, rname);
 		Collection<Resource> response = ConcurrentHashMap.newKeySet();
@@ -102,7 +102,7 @@ public class CoordinatorServer {
 		return arr;
 	}
 
-	public void returnResource(CoordinatorID cid, ResourceID rid)
+	void returnResource(CoordinatorID cid, ResourceID rid)
 			throws ServerCommunicationError, NoSuchResourceException, NotBorrowedException
 	{
 		log.info("Return resource "+rid+" from "+cid);
@@ -139,7 +139,7 @@ public class CoordinatorServer {
 		}
 	}
 
-	public void swapResource(CoordinatorID cid, ResourceID oldRID, ResourceID newRID) throws ServerCommunicationError, NoSuchResourceException {
+	void swapResource(CoordinatorID cid, ResourceID oldRID, ResourceID newRID) throws ServerCommunicationError, NoSuchResourceException {
 		log.info(cid+": swap "+oldRID+", "+newRID);
 
 		InetAddress server = servers.get(new City(oldRID.city));

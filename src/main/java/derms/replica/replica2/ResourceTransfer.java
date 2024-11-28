@@ -8,10 +8,10 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResourceTransfer {
-	public static final int bufsize = 1024;
+class ResourceTransfer {
+	static final int bufsize = 1024;
 
-	public static void send(Resource[] resources, SocketAddress remoteAddr) throws IOException {
+	static void send(Resource[] resources, SocketAddress remoteAddr) throws IOException {
 		DatagramSocket sock = new DatagramSocket();
 
 		for (Resource resource : resources) {
@@ -24,7 +24,7 @@ public class ResourceTransfer {
 		sock.close();
 	}
 
-	public static Resource[] receive(DatagramSocket sock) throws IOException {
+	static Resource[] receive(DatagramSocket sock) throws IOException {
 		List<Resource> resources = new ArrayList<Resource>();
 		byte[] buf = new byte[bufsize];
 		DatagramPacket response = new DatagramPacket(buf, buf.length);

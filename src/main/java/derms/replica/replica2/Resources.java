@@ -6,14 +6,14 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Resources {
+class Resources {
 	private Map<ResourceType, Map<ResourceID, Resource>> resources;
 
-	public Resources() {
+	Resources() {
 		this.resources = new ConcurrentHashMap<ResourceType, Map<ResourceID, Resource>>();
 	}
 
-	public List<Resource> borrowed(CoordinatorID borrower, ResourceType name) {
+	List<Resource> borrowed(CoordinatorID borrower, ResourceType name) {
 		List<Resource> borrowed = new ArrayList<Resource>();
 		Resource[] namedResources = getByName(name);
 		for (Resource r : namedResources) {
@@ -24,7 +24,7 @@ public class Resources {
 		return borrowed;
 	}
 
-	public Resource getByID(ResourceID id) throws NoSuchElementException {
+	Resource getByID(ResourceID id) throws NoSuchElementException {
 		for (Map<ResourceID, Resource> rids : resources.values()) {
 			Resource resource = rids.get(id);
 			if (resource != null) {
@@ -34,7 +34,7 @@ public class Resources {
 		throw new NoSuchElementException("No such resource "+id);
 	}
 
-	public Resource[] getByName(ResourceType name) {
+	Resource[] getByName(ResourceType name) {
 		Map<ResourceID, Resource> rids = resources.get(name);
 		if (rids == null) {
 			return new Resource[0];
@@ -43,7 +43,7 @@ public class Resources {
 		return rids.values().toArray(r);
 	}
 
-	public void add(Resource r) {
+	void add(Resource r) {
 		Map<ResourceID, Resource> rids;
 		synchronized (resources) {
 			rids = resources.get(r.type);
@@ -62,7 +62,7 @@ public class Resources {
 		}
 	}
 
-	public void removeByID(ResourceID id) throws NoSuchElementException {
+	void removeByID(ResourceID id) throws NoSuchElementException {
 		for (Map<ResourceID, Resource> rids : resources.values()) {
 			if (rids.containsKey(id)) {
 				rids.remove(id);

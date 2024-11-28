@@ -6,7 +6,7 @@ import java.io.ObjectInputStream;
 import java.net.*;
 import java.util.logging.Logger;
 
-public class AnnounceListener implements Runnable {
+class AnnounceListener implements Runnable {
 	private static final int bufsize = 1024;
 
 	private InetSocketAddress groupAddr;
@@ -14,7 +14,7 @@ public class AnnounceListener implements Runnable {
 	private Servers servers;
 	private Logger log;
 
-	public AnnounceListener(InetSocketAddress groupAddr, InetAddress localAddr, Servers servers) throws IOException {
+	AnnounceListener(InetSocketAddress groupAddr, InetAddress localAddr, Servers servers) throws IOException {
 		this.groupAddr = groupAddr;
 		this.localAddr = localAddr;
 		this.servers = servers;
