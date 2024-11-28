@@ -1,4 +1,4 @@
-package derms.replica.replica2;
+package derms.replica2;
 
 import java.net.InetAddress;
 import java.util.Collection;

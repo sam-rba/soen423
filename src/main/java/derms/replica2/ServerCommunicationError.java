@@ -1,4 +1,4 @@
-package derms.replica.replica2;
+package derms.replica2;
 
 class ServerCommunicationError extends Exception {
   ServerCommunicationError(String message) {
