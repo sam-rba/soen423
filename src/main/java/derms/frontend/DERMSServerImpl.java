@@ -21,7 +21,8 @@ import javax.jws.soap.SOAPBinding.Style;
 //import constants.PortConstants;
 //import validation.ValidationService;
 //import interfaces.DERMSInterface;
-
+import  derms.Request;
+import  derms.Response;
 @WebService(endpointInterface = "derms.frontend.DERMSInterface")
 public class DERMSServerImpl implements DERMSInterface {
 	
@@ -38,7 +39,7 @@ public class DERMSServerImpl implements DERMSInterface {
     private long startTime;
     private CountDownLatch latch;
     private FEInterface inter = null;
-    private final List<RmResponse> responses = new ArrayList<>();
+    private final List<Response> responses = new ArrayList<>();
 
     public DERMSServerImpl() {
         super();
@@ -51,72 +52,72 @@ public class DERMSServerImpl implements DERMSInterface {
     
 	@Override
     public synchronized String addResource(String resourceID, String resourceName, int duration) {
-        MyRequest myRequest = new MyRequest("addResource", "");
-        myRequest.setResourceID(resourceID);
-        myRequest.setResourceType(resourceName);
-        myRequest.setDuration(duration);
-        myRequest.setSequenceNumber(sendUdpUnicastToSequencer(myRequest));
-        System.out.println("FE Implementation:addEvent>>>" + myRequest.toString());
-        return validateResponses(myRequest);
+        Request request = new Request("addResource", "");
+        request.setResourceID(resourceID);
+        request.setResourceType(resourceName);
+        request.setDuration(duration);
+        request.setSequenceNumber(sendUdpUnicastToSequencer(request));
+        System.out.println("FE Implementation:addEvent>>>" + request.toString());
+        return validateResponses(request);
     }
 
 	@Override
     public synchronized String removeResource(String resourceID, int duration) {
-        MyRequest myRequest = new MyRequest("removeResource", "");
-        myRequest.setResourceID(resourceID);
-        myRequest.setDuration(duration);
-        myRequest.setSequenceNumber(sendUdpUnicastToSequencer(myRequest));
-        System.out.println("FE Implementation:removeEvent>>>" + myRequest.toString());
-        return validateResponses(myRequest);
+        Request request = new Request("removeResource", "");
+        request.setResourceID(resourceID);
+        request.setDuration(duration);
+        request.setSequenceNumber(sendUdpUnicastToSequencer(request));
+        System.out.println("FE Implementation:removeEvent>>>" + request.toString());
+        return validateResponses(request);
     }
 
 	@Override
     public synchronized String listResourceAvailability(String resourceName) {
-        MyRequest myRequest = new MyRequest("listEventAvailability", "");
-        myRequest.setResourceType(resourceName);
-        myRequest.setSequenceNumber(sendUdpUnicastToSequencer(myRequest));
-        System.out.println("FE Implementation:listEventAvailability>>>" + myRequest.toString());
-        return validateResponses(myRequest);
+        Request request = new Request("listEventAvailability", "");
+        request.setResourceType(resourceName);
+        request.setSequenceNumber(sendUdpUnicastToSequencer(request));
+        System.out.println("FE Implementation:listEventAvailability>>>" + request.toString());
+        return validateResponses(request);
     }
 
 	@Override
     public synchronized String requestResource(String coordinatorID, String resourceID, int duration) {
-        MyRequest myRequest = new MyRequest("requestResource", coordinatorID);
-        myRequest.setResourceID(resourceID);
-        myRequest.setDuration(duration);
-        myRequest.setSequenceNumber(sendUdpUnicastToSequencer(myRequest));
-        System.out.println("FE Implementation:bookEvent>>>" + myRequest.toString());
-        return validateResponses(myRequest);
+        Request request = new Request("requestResource", coordinatorID);
+        request.setResourceID(resourceID);
+        request.setDuration(duration);
+        request.setSequenceNumber(sendUdpUnicastToSequencer(request));
+        System.out.println("FE Implementation:bookEvent>>>" + request.toString());
+        return validateResponses(request);
     }
 	
 	@Override
     public synchronized String findResource(String coordinatorID, String resourceName) {
-        MyRequest myRequest = new MyRequest("findResource", coordinatorID);
-        myRequest.setResourceType(resourceName);
-        myRequest.setSequenceNumber(sendUdpUnicastToSequencer(myRequest));
-        System.out.println("FE Implementation:bookEvent>>>" + myRequest.toString());
-        return validateResponses(myRequest);
+        Request request = new Request("findResource", coordinatorID);
+        request.setResourceType(resourceName);
+        request.setSequenceNumber(sendUdpUnicastToSequencer(request));
+        System.out.println("FE Implementation:bookEvent>>>" + request.toString());
+        return validateResponses(request);
     }
 	
 	@Override
     public synchronized String returnResource(String coordinatorID, String resourceID) {
-        MyRequest myRequest = new MyRequest("findResource", coordinatorID);
-        myRequest.setResourceID(resourceID);
-        myRequest.setSequenceNumber(sendUdpUnicastToSequencer(myRequest));
-        System.out.println("FE Implementation:bookEvent>>>" + myRequest.toString());
-        return validateResponses(myRequest);
+        Request request = new Request("findResource", coordinatorID);
+        request.setResourceID(resourceID);
+        request.setSequenceNumber(sendUdpUnicastToSequencer(request));
+        System.out.println("FE Implementation:bookEvent>>>" + request.toString());
+        return validateResponses(request);
     }
 
 	@Override
     public synchronized String swapResource(String coordinatorID, String oldResourceID, String oldResourceType, String newResourceID, String newResourceType) {
-        MyRequest myRequest = new MyRequest("swapResource", coordinatorID);
-        myRequest.setResourceID(newResourceID);
-        myRequest.setResourceType(newResourceType);
-        myRequest.setOldResourceID(oldResourceID);
-        myRequest.setOldResourceType(oldResourceType);
-        myRequest.setSequenceNumber(sendUdpUnicastToSequencer(myRequest));
-        System.out.println("FE Implementation:swapEvent>>>" + myRequest.toString());
-        return validateResponses(myRequest);
+        Request request = new Request("swapResource", coordinatorID);
+        request.setResourceID(newResourceID);
+        request.setResourceType(newResourceType);
+        request.setOldResourceID(oldResourceID);
+        request.setOldResourceType(oldResourceType);
+        request.setSequenceNumber(sendUdpUnicastToSequencer(request));
+        System.out.println("FE Implementation:swapEvent>>>" + request.toString());
+        return validateResponses(request);
     }
 	
     public void waitForResponse() {
@@ -128,26 +129,26 @@ public class DERMSServerImpl implements DERMSInterface {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
-//            inter.sendRequestToSequencer(myRequest);
+//            inter.sendRequestToSequencer(request);
         }
 //         check result and react correspondingly
     }
 	
-   private String validateResponses(MyRequest myRequest) {
+   private String validateResponses(Request request) {
         String resp;
         switch ((int) latch.getCount()) {
             case 0:
             case 1:
             case 2:
             case 3:
-                resp = findMajorityResponse(myRequest);
+                resp = findMajorityResponse(request);
                 break;
             case 4:
                 resp = "Fail: No response from any server";
                 System.out.println(resp);
-                if (myRequest.haveRetries()) {
-                    myRequest.countRetry();
-                    resp = retryRequest(myRequest);
+                if (request.haveRetries()) {
+                    request.countRetry();
+                    resp = retryRequest(request);
                 }
                 rmDown(1);
                 rmDown(2);
@@ -155,20 +156,20 @@ public class DERMSServerImpl implements DERMSInterface {
                 rmDown(4);
                 break;
             default:
-                resp = "Fail: " + myRequest.noRequestSendError();
+                resp = "Fail: " + request.noRequestSendError();
                 break;
         }
         System.out.println("FE Implementation:validateResponses>>>Responses remain:" + latch.getCount() + " >>>Response to be sent to client " + resp);
         return resp;
     }
    
-   private String findMajorityResponse(MyRequest myRequest) {
-       RmResponse res1 = null;
-       RmResponse res2 = null;
-       RmResponse res3 = null;
-       RmResponse res4 = null;
-       for (RmResponse response :responses) {
-           if (response.getSequenceID() == myRequest.getSequenceNumber()) {
+   private String findMajorityResponse(Request request) {
+       Response res1 = null;
+       Response res2 = null;
+       Response res3 = null;
+       Response res4 = null;
+       for (Response response :responses) {
+           if (response.getSequenceID() == request.getSequenceNumber()) {
                switch (response.getRmNumber()) {
                    case 1:
                        res1 = response;
@@ -197,12 +198,12 @@ public class DERMSServerImpl implements DERMSInterface {
        if (res4 == null) rmDown(4);
 
        // Majority voting logic
-       List<RmResponse> validResponses = Arrays.asList(res1, res2, res3, res4).stream()
+       List<Response> validResponses = Arrays.asList(res1, res2, res3, res4).stream()
                                               .filter(Objects::nonNull)
                                               .collect(Collectors.toList());
 
        Map<String, Long> responseCounts = validResponses.stream()
-               .collect(Collectors.groupingBy(RmResponse::getResponse, Collectors.counting()));
+               .collect(Collectors.groupingBy(Response::getResponse, Collectors.counting()));
 
        // Find the response with the highest count
        Optional<Map.Entry<String, Long>> majorityEntry = responseCounts.entrySet().stream()
@@ -319,7 +320,7 @@ public class DERMSServerImpl implements DERMSInterface {
        System.out.println("FE Implementation:notifyOKCommandReceived>>>Response Received: Remaining responses" + latch.getCount());
    }
 
-   public void addReceivedResponse(RmResponse res) {
+   public void addReceivedResponse(Response res) {
        long endTime = System.nanoTime();
        responseTime = (endTime - startTime) / 1000000;
        System.out.println("Current Response time is: " + responseTime);
@@ -327,22 +328,22 @@ public class DERMSServerImpl implements DERMSInterface {
        notifyOKCommandReceived();
    }
 
-   private int sendUdpUnicastToSequencer(MyRequest myRequest) {
+   private int sendUdpUnicastToSequencer(Request request) {
        startTime = System.nanoTime();
-       int sequenceNumber = inter.sendRequestToSequencer(myRequest);
-       myRequest.setSequenceNumber(sequenceNumber);
+       int sequenceNumber = inter.sendRequestToSequencer(request);
+       request.setSequenceNumber(sequenceNumber);
        latch = new CountDownLatch(4);
        waitForResponse();
        return sequenceNumber;
    }
 
-   private String retryRequest(MyRequest myRequest) {
-       System.out.println("FE Implementation:retryRequest>>>" + myRequest.toString());
+   private String retryRequest(Request request) {
+       System.out.println("FE Implementation:retryRequest>>>" + request.toString());
        startTime = System.nanoTime();
-       inter.retryRequest(myRequest);
+       inter.retryRequest(request);
        latch = new CountDownLatch(4);
        waitForResponse();
-       return validateResponses(myRequest);
+       return validateResponses(request);
    }
 
 	

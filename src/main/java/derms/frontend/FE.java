@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 import javax.xml.ws.Endpoint;
+import  derms.Request;
+import  derms.Response;
 
 //import constants.Constants;
 
@@ -20,8 +22,8 @@ public class FE {
     private static final int RM_Multicast_Port = 1234;
     public static String FE_Address = "http://localhost:8067/service/FE";
     private static final String FE_IP_Address = "";
-    
-    
+
+
 //    public static String FE_IP_Address = "localhost";
 
     public static void main(String[] args) {
@@ -30,7 +32,7 @@ public class FE {
                 @Override
                 public void informRmHasBug(int RmNumber) {
 //                    String errorMessage = new MyRequest(RmNumber, "1").toString();
-                    MyRequest errorMessage = new MyRequest(RmNumber, "1");
+                    Request errorMessage = new Request(RmNumber, "1");
                     System.out.println("Rm:" + RmNumber + "has bug");
 //                    sendMulticastFaultMessageToRms(errorMessage);
                     sendUnicastToSequencer(errorMessage);
@@ -39,21 +41,21 @@ public class FE {
                 @Override
                 public void informRmIsDown(int RmNumber) {
 //                    String errorMessage = new MyRequest(RmNumber, "2").toString();
-                    MyRequest errorMessage = new MyRequest(RmNumber, "2");
+                    Request errorMessage = new Request(RmNumber, "2");
                     System.out.println("Rm:" + RmNumber + "is down");
 //                    sendMulticastFaultMessageToRms(errorMessage);
                     sendUnicastToSequencer(errorMessage);
                 }
 
                 @Override
-                public int sendRequestToSequencer(MyRequest myRequest) {
+                public int sendRequestToSequencer(Request myRequest) {
                     return sendUnicastToSequencer(myRequest);
                 }
 
                 @Override
-                public void retryRequest(MyRequest myRequest) {
+                public void retryRequest(Request request) {
                     System.out.println("No response from all Rms, Retrying request...");
-                    sendUnicastToSequencer(myRequest);
+                    sendUnicastToSequencer(request);
                 }
             };
             DERMSServerImpl servant = new DERMSServerImpl(inter);
@@ -75,7 +77,7 @@ public class FE {
 
     }
 
-    private static int sendUnicastToSequencer(MyRequest requestFromClient) {
+    private static int sendUnicastToSequencer(Request requestFromClient) {
         DatagramSocket aSocket = null;
         String dataFromClient = requestFromClient.toString();
         System.out.println("FE:sendUnicastToSequencer>>>" + dataFromClient);
@@ -154,7 +156,7 @@ public class FE {
                 String sentence = new String(response.getData(), 0,
                         response.getLength()).trim();
                 System.out.println("FE:Response received from Rm>>>" + sentence);
-                RmResponse rmResponse = new RmResponse(sentence);
+                Response rmResponse = new Response(sentence);
 //                String[] parts = sentence.split(";");
 
                 System.out.println("Adding response to FrontEndImplementation:");

@@ -1,11 +1,12 @@
 package derms.frontend;
+import  derms.Request;
 
 public interface FEInterface {
-    void informRmHasBug(int RmNumber);
+    void informRmHasBug(int replicaId);
 
-    void informRmIsDown(int RmNumber);
+    void informRmIsDown(int replicaId);
 
-    int sendRequestToSequencer(MyRequest myRequest);
+    int sendRequestToSequencer(Request request);
 
-    void retryRequest(MyRequest myRequest);
+    void retryRequest(Request request);
 }
