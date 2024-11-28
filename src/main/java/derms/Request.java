@@ -2,16 +2,7 @@ package derms;
 
 import derms.net.MessagePayload;
 
-// TODO
 public class Request implements MessagePayload {
-
-
-    @Override
-    public int hash() {
-        // TODO
-        return -1;
-    }
-
     private String function = "";
     private String clientID = "";
     private String resourceType = "";
@@ -27,6 +18,13 @@ public class Request implements MessagePayload {
     public Request(String function, String clientID) {
         setFunction(function);
         setClientID(clientID);
+    }
+
+    @Override
+    public int hash() {
+        return function.hashCode() + clientID.hashCode() + resourceType.hashCode()
+                + OldResourceType.hashCode() + resourceID.hashCode() + duration + sequenceNumber
+                + MessageType.hashCode();
     }
 
     public Request(int rmNumber, String bugType) {

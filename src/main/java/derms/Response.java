@@ -2,14 +2,7 @@ package derms;
 
 import derms.net.MessagePayload;
 
-// TODO
 public class Response implements MessagePayload {
-
-    @Override
-    public int hash() {
-        // TODO
-        return  -1;
-    }
     private int sequenceID = 0;
     private String response = "";
     private int rmNumber = 0;
@@ -36,6 +29,14 @@ public class Response implements MessagePayload {
         setOldResourceID(messageParts[7]);
         setOldResourceType(messageParts[8]);
         setDuration(Integer.parseInt(messageParts[9]));
+    }
+
+    @Override
+    public int hash() {
+        return  sequenceID + response.hashCode() + rmNumber + function.hashCode()
+                + userID.hashCode() + newResourceID.hashCode() + newResourceType.hashCode()
+                + oldResourceID.hashCode() + oldResourceType.hashCode() + duration
+                + udpMessage.hashCode();
     }
 
     public int getSequenceID() {
