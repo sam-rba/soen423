@@ -4,27 +4,27 @@ import java.io.Serializable;
 
 public  class Resource implements Serializable {
   public ResourceID id;
-  public ResourceName name;
+  public ResourceType type;
   public int duration;
   public boolean isBorrowed;
   public CoordinatorID borrower;
   public int borrowDuration;
 
-  public Resource(ResourceID id, ResourceName name, int duration, boolean isBorrowed, CoordinatorID borrower, int borrowDuration) {
+  public Resource(ResourceID id, ResourceType type, int duration, boolean isBorrowed, CoordinatorID borrower, int borrowDuration) {
     this.id = id;
-    this.name = name;
+    this.type = type;
     this.duration = duration;
     this.isBorrowed = isBorrowed;
     this.borrower = borrower;
     this.borrowDuration = borrowDuration;
   }
 
-  public Resource(ResourceID id, ResourceName name, int duration) {
-    this(id, name, duration, false, new CoordinatorID(), -1);
+  public Resource(ResourceID id, ResourceType type, int duration) {
+    this(id, type, duration, false, new CoordinatorID(), -1);
   }
 
   public Resource() {
-    this(new ResourceID(), ResourceName.AMBULANCE, 0);
+    this(new ResourceID(), ResourceType.AMBULANCE, 0);
   }
 
   @Override

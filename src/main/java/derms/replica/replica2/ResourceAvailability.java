@@ -13,11 +13,11 @@ public class ResourceAvailability {
 
 	public static class Client implements Runnable {
 		private InetAddress serverAddr;
-		private ResourceName request;
+		private ResourceType request;
 		private Collection<Resource> resources;
 		private Logger log;
 
-		public Client(InetAddress serverAddr, ResourceName request, Collection<Resource> response) throws IOException {
+		public Client(InetAddress serverAddr, ResourceType request, Collection<Resource> response) throws IOException {
 			this.serverAddr = serverAddr;
 			this.request = request;
 			this.resources = response;
@@ -104,9 +104,9 @@ public class ResourceAvailability {
 						continue;
 					}
 
-					ResourceName requestedName = null;
+					ResourceType requestedName = null;
 					try {
-						requestedName = ObjectPacket.deserialize(request, ResourceName.class);
+						requestedName = ObjectPacket.deserialize(request, ResourceType.class);
 					} catch (IOException e) {
 						log.warning("Failed to deserialize request: "+e.getMessage());
 						continue;

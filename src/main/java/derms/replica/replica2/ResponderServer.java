@@ -62,7 +62,7 @@ public class ResponderServer {
 		}
 	}
 
-	public Resource[] listResourceAvailability(ResourceName rname) throws ServerCommunicationError {
+	public Resource[] listResourceAvailability(ResourceType rname) throws ServerCommunicationError {
 		log.info("Request for available "+rname);
 		Collection<Resource> availableResources = ConcurrentHashMap.newKeySet();
 		ExecutorService pool = Executors.newFixedThreadPool(servers.size());

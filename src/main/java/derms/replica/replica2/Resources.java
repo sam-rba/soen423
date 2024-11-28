@@ -7,13 +7,13 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Resources {
-	private Map<ResourceName, Map<ResourceID, Resource>> resources;
+	private Map<ResourceType, Map<ResourceID, Resource>> resources;
 
 	public Resources() {
-		this.resources = new ConcurrentHashMap<ResourceName, Map<ResourceID, Resource>>();
+		this.resources = new ConcurrentHashMap<ResourceType, Map<ResourceID, Resource>>();
 	}
 
-	public List<Resource> borrowed(CoordinatorID borrower, ResourceName name) {
+	public List<Resource> borrowed(CoordinatorID borrower, ResourceType name) {
 		List<Resource> borrowed = new ArrayList<Resource>();
 		Resource[] namedResources = getByName(name);
 		for (Resource r : namedResources) {
@@ -34,7 +34,7 @@ public class Resources {
 		throw new NoSuchElementException("No such resource "+id);
 	}
 
-	public Resource[] getByName(ResourceName name) {
+	public Resource[] getByName(ResourceType name) {
 		Map<ResourceID, Resource> rids = resources.get(name);
 		if (rids == null) {
 			return new Resource[0];
@@ -46,10 +46,10 @@ public class Resources {
 	public void add(Resource r) {
 		Map<ResourceID, Resource> rids;
 		synchronized (resources) {
-			rids = resources.get(r.name);
+			rids = resources.get(r.type);
 			if (rids == null) {
 				rids = new ConcurrentHashMap<ResourceID, Resource>();
-				resources.put(r.name, rids);
+				resources.put(r.type, rids);
 			}
 		}
 		synchronized (rids) {

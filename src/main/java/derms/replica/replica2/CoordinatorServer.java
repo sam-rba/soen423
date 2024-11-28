@@ -67,7 +67,7 @@ public class CoordinatorServer {
 		}
 	}
 
-	public Resource[] findResource(CoordinatorID cid, ResourceName rname) throws ServerCommunicationError {
+	public Resource[] findResource(CoordinatorID cid, ResourceType rname) throws ServerCommunicationError {
 		log.info("Find Resource "+rname+" from "+cid);
 		FindResource.Request request = new FindResource.Request(cid, rname);
 		Collection<Resource> response = ConcurrentHashMap.newKeySet();

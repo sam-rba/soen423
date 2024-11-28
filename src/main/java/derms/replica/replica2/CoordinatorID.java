@@ -11,12 +11,17 @@ public class CoordinatorID implements Serializable {
     this.num = num;
   }
 
-  public CoordinatorID(String city, int num) {
-    this(city, (short) num);
-  }
+  public static CoordinatorID parse(String str) throws IllegalArgumentException {
+    if (str.length() != City.codeLen+ID.nDigits)
+      throw new IllegalArgumentException("illegal coordinator ID: " + str);
 
-  public CoordinatorID() {
-    this("XXX", 0);
+    try {
+      String city = str.substring(0, City.codeLen);
+      short num = Short.parseShort(str.substring(City.codeLen));
+      return new CoordinatorID(city, num);
+    } catch (NumberFormatException e) {
+      throw new IllegalArgumentException("illegal coordinator ID '" + str + "': " + e.getMessage());
+    }
   }
 
   @Override

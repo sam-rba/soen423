@@ -124,9 +124,9 @@ public class FindResource {
 
 	public static class Request implements Serializable {
 		private CoordinatorID cid;
-		private ResourceName rname;
+		private ResourceType rname;
 
-		public Request(CoordinatorID cid, ResourceName rname) {
+		public Request(CoordinatorID cid, ResourceType rname) {
 			this.cid = cid;
 			this.rname = rname;
 		}

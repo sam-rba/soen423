@@ -45,7 +45,7 @@ public class ReplicaManager {
         replica = new Replica1(frontEndAddress);
         break;
         case 2:
-        replica = new Replica2( frontEndAddress);
+        replica = new Replica2();
         break;
         case 3:
         replica = new Replica3( frontEndAddress);
