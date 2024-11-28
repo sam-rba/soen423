@@ -142,8 +142,8 @@ public class Response implements MessagePayload {
     @Override
     public boolean equals(Object obj) {
         if (obj != null) {
-            if (obj instanceof RmResponse) {
-                RmResponse obj1 = (RmResponse) obj;
+            if (obj instanceof Response) {
+                Response obj1 = (Response) obj;
                 return obj1.getFunction().equalsIgnoreCase(this.getFunction())
                         && obj1.getSequenceID() == this.getSequenceID()
                         && obj1.getUserID().equalsIgnoreCase(this.getUserID())
