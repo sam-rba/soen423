@@ -20,7 +20,7 @@ public class FE {
     private static final int FE_SQ_PORT = 1414;
     private static final int FE_PORT = 1999;
     private static final int RM_Multicast_Port = 1234;
-    public static String FE_Address = "http://localhost:8067/service/FE";
+    public static String FE_Address = "http://localhost:8067/"+DERMSInterface.class.getSimpleName();
     private static final String FE_IP_Address = "";
 
 
