@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.logging.Logger;
 
-public class Replica1 {
+public class Replica1 implements Replica {
     private final ReliableUnicastSender<Response> unicastSender;
     ReplicaManager replicaManager;
     private final Logger log;
@@ -19,15 +19,18 @@ public class Replica1 {
     }
 
 
+    @Override
     public boolean isAlive() {
         return alive;
     }
 
+    @Override
     public void startProcess() {
         // Simulate the replica process starting.
         log.info("Replica " + 1 + " started.");
     }
 
+    @Override
     public void processRequest(Request request) {
         // Process the request and create a response.
         endpoint1 = Endpoint.publish("http://localhost:8080/ws/derms", new DERMSServer("MTL"));
@@ -82,9 +85,13 @@ public class Replica1 {
         replicaManager.sendResponseToFE(response);
     }
 
+    @Override
     public void restart() {
         // Restart the replica process.
         log.warning("Replica " + 1 + " is restarting...");
         startProcess();
     }
+
+    @Override
+    public int getId() { return 1; }
 }
