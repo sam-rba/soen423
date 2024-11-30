@@ -1,14 +1,15 @@
 package derms.frontend;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 
 import javax.xml.ws.Endpoint;
+
+import derms.Config;
 import  derms.Request;
 import  derms.Response;
+import derms.net.runicast.ReliableUnicastSender;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 //import constants.Constants;
@@ -16,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FE {
     private static final int sequencerPort = 3333;
     private static final String sequencerIP = "localhost";
-//        private static final String sequencerIP = "localhost";
+    private static ReliableUnicastSender<Request> sequencerSock;
     private static final String RM_Multicast_group_address = "230.1.1.10";
     private static final int FE_SQ_PORT = 1414;
     private static final int FE_PORT = 1999;
@@ -29,6 +30,11 @@ public class FE {
 
     public static void main(String[] args) {
         try {
+            System.out.println("Connecting to sequencer ("
+                    + sequencerIP + ":" + Config.sequencerInPort + ")...");
+            sequencerSock = new ReliableUnicastSender<Request>(
+                    new InetSocketAddress(sequencerIP, Config.sequencerInPort));
+
             FEInterface inter = new FEInterface() {
                 @Override
                 public void informRmHasBug(int RmNumber) {
@@ -71,26 +77,24 @@ public class FE {
 //            System.err.println("Exception: " + e);
             e.printStackTrace(System.out);
 //            Logger.serverLog(serverID, "Exception: " + e);
+        } finally {
+            try {
+                sequencerSock.close();
+            } catch (Exception e) {
+                System.out.println("Error closing sequencer socket:");
+                e.printStackTrace(System.out);
+            }
         }
 
 //        System.out.println("FrontEnd Server Shutting down");
 //        Logger.serverLog(serverID, " Server Shutting down");
-
     }
 
     private static int sendUnicastToSequencer(Request requestFromClient) {
-        DatagramSocket aSocket = null;
-        String dataFromClient = requestFromClient.toString();
-        System.out.println("FE:sendUnicastToSequencer>>>" + dataFromClient);
-//        int sequenceID = 0;
         int sequenceID = sequenceIDGenerator.incrementAndGet();
         try {
-            aSocket = new DatagramSocket(FE_SQ_PORT);
-            byte[] message = dataFromClient.getBytes();
-            InetAddress aHost = InetAddress.getByName(sequencerIP);
-            DatagramPacket requestToSequencer = new DatagramPacket(message, dataFromClient.length(), aHost, sequencerPort);
+            sequencerSock.send(requestFromClient);
 
-            aSocket.send(requestToSequencer);
 //            System.out.println("FE:sendUnicastToSequencer/ResponseFromSequencer>>> send is done");
 //            aSocket.setSoTimeout(1000);
 //            // Set up an UPD packet for recieving
@@ -111,9 +115,6 @@ public class FE {
             System.out.println("Failed: " + requestFromClient.noRequestSendError());
             e.printStackTrace();
             System.out.println("IO: " + e.getMessage());
-        } finally {
-            if (aSocket != null)
-                aSocket.close();
         }
         return sequenceID;
     }
