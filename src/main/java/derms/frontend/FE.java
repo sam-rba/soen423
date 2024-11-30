@@ -67,21 +67,18 @@ public class FE {
             Endpoint endpoint = Endpoint.publish(FE_Address, servant);
             Runnable task = () -> {
                 listenForUDPResponses(servant);
+                try {
+                    sequencerSock.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             };
             Thread thread = new Thread(task);
             thread.start();
-
         } catch (Exception e) {
 //            System.err.println("Exception: " + e);
             e.printStackTrace(System.out);
 //            Logger.serverLog(serverID, "Exception: " + e);
-        } finally {
-            try {
-                sequencerSock.close();
-            } catch (Exception e) {
-                System.out.println("Error closing sequencer socket:");
-                e.printStackTrace(System.out);
-            }
         }
 
 //        System.out.println("FrontEnd Server Shutting down");
