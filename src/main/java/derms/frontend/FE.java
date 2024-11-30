@@ -9,21 +9,22 @@ import java.net.SocketException;
 import javax.xml.ws.Endpoint;
 import  derms.Request;
 import  derms.Response;
+import java.util.concurrent.atomic.AtomicInteger;
 
 //import constants.Constants;
 
 public class FE {
-    private static final int sequencerPort = 1333;
-    private static final String sequencerIP = "192.168.2.17";
+    private static final int sequencerPort = 3333;
+    private static final String sequencerIP = "localhost";
 //        private static final String sequencerIP = "localhost";
     private static final String RM_Multicast_group_address = "230.1.1.10";
     private static final int FE_SQ_PORT = 1414;
     private static final int FE_PORT = 1999;
     private static final int RM_Multicast_Port = 1234;
     public static String FE_Address = "http://localhost:8067/"+DERMSInterface.class.getSimpleName();
-    private static final String FE_IP_Address = "";
+    private static final String FE_IP_Address = "localhost";
 
-
+    private static AtomicInteger sequenceIDGenerator = new AtomicInteger(0);
 //    public static String FE_IP_Address = "localhost";
 
     public static void main(String[] args) {
@@ -81,7 +82,8 @@ public class FE {
         DatagramSocket aSocket = null;
         String dataFromClient = requestFromClient.toString();
         System.out.println("FE:sendUnicastToSequencer>>>" + dataFromClient);
-        int sequenceID = 0;
+//        int sequenceID = 0;
+        int sequenceID = sequenceIDGenerator.incrementAndGet();
         try {
             aSocket = new DatagramSocket(FE_SQ_PORT);
             byte[] message = dataFromClient.getBytes();
@@ -89,18 +91,19 @@ public class FE {
             DatagramPacket requestToSequencer = new DatagramPacket(message, dataFromClient.length(), aHost, sequencerPort);
 
             aSocket.send(requestToSequencer);
+//            System.out.println("FE:sendUnicastToSequencer/ResponseFromSequencer>>> send is done");
+//            aSocket.setSoTimeout(1000);
+//            // Set up an UPD packet for recieving
+//            byte[] buffer = new byte[1000];
+//            DatagramPacket response = new DatagramPacket(buffer, buffer.length);
+//            // Try to receive the response from the ping
+//            aSocket.receive(response);
+//            String sentence = new String(response.getData(), 0,
+//                    response.getLength());
+//            System.out.println("FE:sendUnicastToSequencer/ResponseFromSequencer>>>" + sentence);
+//            sequenceID = Integer.parseInt(sentence.trim());
+//            System.out.println("FE:sendUnicastToSequencer/ResponseFromSequencer>>>SequenceID:" + sequenceID);
 
-            aSocket.setSoTimeout(1000);
-            // Set up an UPD packet for recieving
-            byte[] buffer = new byte[1000];
-            DatagramPacket response = new DatagramPacket(buffer, buffer.length);
-            // Try to receive the response from the ping
-            aSocket.receive(response);
-            String sentence = new String(response.getData(), 0,
-                    response.getLength());
-            System.out.println("FE:sendUnicastToSequencer/ResponseFromSequencer>>>" + sentence);
-            sequenceID = Integer.parseInt(sentence.trim());
-            System.out.println("FE:sendUnicastToSequencer/ResponseFromSequencer>>>SequenceID:" + sequenceID);
         } catch (SocketException e) {
             System.out.println("Failed: " + requestFromClient.noRequestSendError());
             System.out.println("Socket: " + e.getMessage());

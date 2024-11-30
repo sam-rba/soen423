@@ -52,10 +52,12 @@ public class DERMSServerImpl implements DERMSInterface {
     
 	@Override
     public synchronized String addResource(String resourceID, String resourceName, int duration) {
+        System.out.println("FE Implementation:addEvent>>> called the method" );
         Request request = new Request("addResource", "");
         request.setResourceID(resourceID);
         request.setResourceType(resourceName);
         request.setDuration(duration);
+        System.out.println("FE Implementation:addEvent>>> set values" );
         request.setSequenceNumber(sendUdpUnicastToSequencer(request));
         System.out.println("FE Implementation:addEvent>>>" + request.toString());
         return validateResponses(request);
@@ -330,7 +332,9 @@ public class DERMSServerImpl implements DERMSInterface {
 
    private int sendUdpUnicastToSequencer(Request request) {
        startTime = System.nanoTime();
+       System.out.println("inside the udp unicast sequencer");
        int sequenceNumber = inter.sendRequestToSequencer(request);
+       System.out.println("after its done the udp unicast sequencer");
        request.setSequenceNumber(sequenceNumber);
        latch = new CountDownLatch(4);
        waitForResponse();
