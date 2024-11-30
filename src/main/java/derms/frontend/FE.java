@@ -92,23 +92,6 @@ public class FE {
         int sequenceID = sequenceIDGenerator.incrementAndGet();
         try {
             sequencerSock.send(requestFromClient);
-
-//            System.out.println("FE:sendUnicastToSequencer/ResponseFromSequencer>>> send is done");
-//            aSocket.setSoTimeout(1000);
-//            // Set up an UPD packet for recieving
-//            byte[] buffer = new byte[1000];
-//            DatagramPacket response = new DatagramPacket(buffer, buffer.length);
-//            // Try to receive the response from the ping
-//            aSocket.receive(response);
-//            String sentence = new String(response.getData(), 0,
-//                    response.getLength());
-//            System.out.println("FE:sendUnicastToSequencer/ResponseFromSequencer>>>" + sentence);
-//            sequenceID = Integer.parseInt(sentence.trim());
-//            System.out.println("FE:sendUnicastToSequencer/ResponseFromSequencer>>>SequenceID:" + sequenceID);
-
-        } catch (SocketException e) {
-            System.out.println("Failed: " + requestFromClient.noRequestSendError());
-            System.out.println("Socket: " + e.getMessage());
         } catch (IOException e) {
             System.out.println("Failed: " + requestFromClient.noRequestSendError());
             e.printStackTrace();
