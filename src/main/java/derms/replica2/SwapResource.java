@@ -219,7 +219,7 @@ class SwapResource {
 
 		private void returnOldResource(Resource r) {
 			r.isBorrowed = false;
-			r.borrower = request.cid;
+			r.borrower = new CoordinatorID();
 			r.borrowDuration = -1;
 		}
 	}

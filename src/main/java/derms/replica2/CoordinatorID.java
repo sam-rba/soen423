@@ -11,6 +11,10 @@ class CoordinatorID implements Serializable {
     this.num = num;
   }
 
+  CoordinatorID() {
+    this("XXX", (short) 0);
+  }
+
   static CoordinatorID parse(String str) throws IllegalArgumentException {
     if (str.length() != City.codeLen+ID.nDigits)
       throw new IllegalArgumentException("illegal coordinator ID: " + str);
