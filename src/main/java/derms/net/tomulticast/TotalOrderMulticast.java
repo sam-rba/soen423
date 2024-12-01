@@ -6,6 +6,7 @@ import derms.net.rmulticast.ReliableMulticast;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.util.logging.Logger;
 
 /**
@@ -28,6 +29,13 @@ public abstract class TotalOrderMulticast<T extends MessagePayload> {
     protected final InetSocketAddress group;
     protected Long seq; // Sequence number.
     protected final Logger log;
+
+    protected TotalOrderMulticast(InetSocketAddress group, InetAddress laddr, NetworkInterface ifs) throws IOException {
+        this.sock = new ReliableMulticast<Message<T>>(group, laddr, ifs);
+        this.group = group;
+        this.seq = (long) 0;
+        this.log = Logger.getLogger(this.getClass().getName());
+    }
 
     protected TotalOrderMulticast(InetSocketAddress group, InetAddress laddr) throws IOException {
         this.sock = new ReliableMulticast<Message<T>>(group, laddr);

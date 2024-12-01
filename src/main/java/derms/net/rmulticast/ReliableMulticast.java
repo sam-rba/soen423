@@ -38,8 +38,9 @@ public class ReliableMulticast<T extends MessagePayload> {
      *
      * @param group The IP address and port of the multicast group.
      * @param laddr The IP address of the local process.
+     * @param ifs The network interface to use.
      */
-    public ReliableMulticast(InetSocketAddress group, InetAddress laddr) throws IOException {
+    public ReliableMulticast(InetSocketAddress group, InetAddress laddr, NetworkInterface ifs) throws IOException {
         this.group = group;
         this.laddr = laddr;
 
@@ -49,7 +50,7 @@ public class ReliableMulticast<T extends MessagePayload> {
         this.retransmissions = new LinkedBlockingQueue<Message<T>>();
         this.groupMembers = ConcurrentHashMap.newKeySet();
 
-        NetworkInterface ifs = Net.getMulticastInterface();
+        System.out.println(getClass().getSimpleName() + " using network interface " + ifs);
         this.sock = DatagramChannel.open(StandardProtocolFamily.INET)
                 .setOption(StandardSocketOptions.SO_REUSEADDR, true)
                 .bind(new InetSocketAddress(group.getAddress(), group.getPort()))
@@ -65,6 +66,16 @@ public class ReliableMulticast<T extends MessagePayload> {
         pool.execute(new Retransmit<T>(retransmissions, sock, group));
         pool.execute(new Prune<T>(received, groupMembers));
         pool.execute(new Heartbeat(group, laddr, acks, nacks, sock));
+    }
+
+    /**
+     * Join the specified multicast group using the default network interface on the machine.
+     *
+     * @param group The IP address and port of the multicast group.
+     * @param laddr The IP address of the local process.
+     */
+    public ReliableMulticast(InetSocketAddress group, InetAddress laddr) throws IOException {
+        this(group, laddr, Net.getMulticastInterface());
     }
 
     public void close() throws IOException {
