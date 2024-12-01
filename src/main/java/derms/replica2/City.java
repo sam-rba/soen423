@@ -2,7 +2,7 @@ package derms.replica2;
 
 import java.io.Serializable;
 
-class City implements Serializable {
+public class City implements Serializable {
 	static final int codeLen = 3;
 
 	private String code;
@@ -13,7 +13,7 @@ class City implements Serializable {
 		this.code = code;
 	}
 
-	City() {
+	public City() {
 		this("XXX");
 	}
 

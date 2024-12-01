@@ -1,6 +1,7 @@
 package derms.replica2;
 
 import derms.Replica;
+import derms.ReplicaManager;
 import derms.Request;
 import derms.Response;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -23,14 +24,15 @@ public class Replica2 implements Replica {
 	private final ResponderServer responderServer;
 	private final CoordinatorServer coordinatorServer;
 	private boolean alive;
+	private final ReplicaManager replicaManager;
 
-	public Replica2(City city) throws IOException {
+	public Replica2(City city, ReplicaManager replicaManager) throws IOException {
 		this.city = city;
 		this.localAddr = InetAddress.getLocalHost();
 		this.resources = new Resources();
 		this.servers = new Servers();
 		this.log = DermsLogger.getLogger(getClass());
-
+		this.replicaManager = replicaManager;
 		try {
 			this.responderServer = new ResponderServer(city, resources, servers);
 		} catch (IOException e) {

@@ -169,7 +169,7 @@ class ReturnResource {
 								request.resourceID+" is not borrowed by "+request.coordinatorID);
 					}
 					resource.isBorrowed = false;
-					resource.borrower = new CoordinatorID();
+					resource.borrower = request.coordinatorID;
 					resource.borrowDuration = -1;
 					return new Response(Response.Status.SUCCESS, request.coordinatorID+" successfully returned "+resource.id);
 				}

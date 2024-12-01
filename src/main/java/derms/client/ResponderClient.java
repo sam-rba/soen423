@@ -10,10 +10,10 @@ public class ResponderClient extends Client {
     }
 
     public static void main(String[] args) {
-//        if (args.length < 1) {
-//            System.err.println("Missing argument 'FE host'");
-//            System.exit(1);
-//        }
+        if (args.length < 1) {
+            System.err.println("Missing argument 'FE host'");
+            System.exit(1);
+        }
 
 //        String FEhost = args[0];
         String FEhost = "localhost";

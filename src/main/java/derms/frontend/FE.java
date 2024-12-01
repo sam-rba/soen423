@@ -15,9 +15,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 //import constants.Constants;
 
 public class FE {
-    private static final String sequencerIP = "localhost";
+    private static String sequencerIP = "localhost";
     private static ReliableUnicastSender<Request> sequencerSock;
-    private static final String RM_Multicast_group_address = "230.1.1.10";
+    private static final String RM_Multicast_group_address = Config.group.toString();
     private static final int FE_PORT = 1999;
     private static final int RM_Multicast_Port = 1234;
     public static String FE_Address = "http://localhost:8067/"+DERMSInterface.class.getSimpleName();
@@ -28,6 +28,7 @@ public class FE {
 
     public static void main(String[] args) {
         try {
+            sequencerIP = args[0];
             System.out.println("Connecting to sequencer ("
                     + sequencerIP + ":" + Config.sequencerInPort + ")...");
             sequencerSock = new ReliableUnicastSender<Request>(
@@ -54,7 +55,9 @@ public class FE {
 
                 @Override
                 public int sendRequestToSequencer(Request myRequest) {
-                    return sendUnicastToSequencer(myRequest);
+                    int r = sendUnicastToSequencer(myRequest);
+                    System.out.println("request: " + myRequest + " returned " + r);
+                    return r;
                 }
 
                 @Override

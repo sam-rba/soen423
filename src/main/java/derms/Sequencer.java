@@ -69,6 +69,7 @@ public class Sequencer implements Runnable {
         for (;;) {
             try {
                 Request req = in.receive();
+                System.out.println("Seq: received: " + req);
                 out.send(req);
             } catch (InterruptedException e) {
                 log.info("Shutting down.");

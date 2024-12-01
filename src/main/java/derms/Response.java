@@ -31,6 +31,11 @@ public class Response implements MessagePayload {
         setDuration(Integer.parseInt(messageParts[9]));
     }
 
+    public Response(int sequenceID, String status) {
+        setSequenceID(sequenceID);
+        setResponse(status);
+    }
+
     @Override
     public int hash() {
         return  sequenceID + response.hashCode() + rmNumber + function.hashCode()

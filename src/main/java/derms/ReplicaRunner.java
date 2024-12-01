@@ -13,16 +13,16 @@ public class ReplicaRunner {
         int replicaId = Integer.parseInt(args[0]);
         System.out.println("Starting ReplicaManager for Replica " + replicaId);
 
-        try {
-            FEInterface frontEnd = new FE(); // Assume FE implements FEInterface
-            ReplicaManager replicaManager = new ReplicaManager(replicaId, frontEnd);
-
-            // Simulate receiving and handling client requests
-            // Add logic to listen for client requests and forward them to replicaManager
-
-        } catch (IOException e) {
-            System.err.println("Failed to start ReplicaManager: " + e.getMessage());
-            e.printStackTrace();
-        }
+//        try {
+//            FEInterface frontEnd = new FE(); // Assume FE implements FEInterface
+//            ReplicaManager replicaManager = new ReplicaManager(replicaId, frontEnd);
+//
+//            // Simulate receiving and handling client requests
+//            // Add logic to listen for client requests and forward them to replicaManager
+//
+//        } catch (IOException e) {
+//            System.err.println("Failed to start ReplicaManager: " + e.getMessage());
+//            e.printStackTrace();
+//        }
     }
 }

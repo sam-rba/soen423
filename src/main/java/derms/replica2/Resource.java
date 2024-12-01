@@ -20,7 +20,7 @@ class Resource implements Serializable {
   }
 
   Resource(ResourceID id, ResourceType type, int duration) {
-    this(id, type, duration, false, new CoordinatorID(), -1);
+    this(id, type, duration, false, new CoordinatorID("XXX", (short) 1), -1);
   }
 
   Resource() {
