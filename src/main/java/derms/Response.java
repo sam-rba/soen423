@@ -34,6 +34,14 @@ public class Response implements MessagePayload {
     public Response(int sequenceID, String status) {
         setSequenceID(sequenceID);
         setResponse(status);
+        setRmNumber("2");
+        setFunction("");
+        setUserID("");
+        setNewResourceID("");
+        setNewResourceType("");
+        setOldResourceID("");
+        setOldResourceType("");
+        setDuration(1);
     }
 
     @Override

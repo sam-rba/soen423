@@ -24,7 +24,7 @@ public class ReplicaManager {
     private Replica replica;
     private Response response;
     private final Logger log;
-    private ReliableUnicastSender<Response> unicastSender;
+    private ReliableUnicastSender<Response> unicastSender = new ReliableUnicastSender<>(new InetSocketAddress("localhost", 1999));
     private TotalOrderMulticastReceiver multicastReceiver;
     private final InetSocketAddress frontEndAddress;
 
