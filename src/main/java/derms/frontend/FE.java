@@ -8,6 +8,7 @@ import javax.xml.ws.Endpoint;
 import derms.Config;
 import  derms.Request;
 import  derms.Response;
+import derms.net.runicast.ReliableUnicastReceiver;
 import derms.net.runicast.ReliableUnicastSender;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -116,48 +117,84 @@ public class FE {
 
     }
 
-    private static void listenForUDPResponses(DERMSServerImpl servant) {
-        DatagramSocket aSocket = null;
-        try {
-
-//            aSocket = new MulticastSocket(1413);
-//            InetAddress[] allAddresses = Inet4Address.getAllByName("SepJ-ROG");
-            InetAddress desiredAddress = InetAddress.getByName(FE_IP_Address);
-//            //In order to find the desired Ip to be routed by other modules (WiFi adapter)
-//            for (InetAddress address :
-//                    allAddresses) {
-//                if (address.getHostAddress().startsWith("192.168.2")) {
-//                    desiredAddress = address;
-//                }
+//    private static void listenForUDPResponses(DERMSServerImpl servant) {
+//        DatagramSocket aSocket = null;
+//        try {
+//
+////            aSocket = new MulticastSocket(1413);
+////            InetAddress[] allAddresses = Inet4Address.getAllByName("SepJ-ROG");
+//            InetAddress desiredAddress = InetAddress.getByName(FE_IP_Address);
+////            //In order to find the desired Ip to be routed by other modules (WiFi adapter)
+////            for (InetAddress address :
+////                    allAddresses) {
+////                if (address.getHostAddress().startsWith("192.168.2")) {
+////                    desiredAddress = address;
+////                }
+////            }
+////            aSocket.joinGroup(InetAddress.getByName("230.1.1.5"));
+//            aSocket = new DatagramSocket(FE_PORT, desiredAddress);
+//            byte[] buffer = new byte[1000];
+//            System.out.println("FE Server Started on " + desiredAddress + ":" + FE_PORT + "............");
+//
+//            while (true) {
+//                DatagramPacket response = new DatagramPacket(buffer, buffer.length);
+//                aSocket.receive(response);
+//                String sentence = new String(response.getData(), 0,
+//                        response.getLength()).trim();
+//                System.out.println("FE:Response received from Rm>>>" + sentence);
+//                Response rmResponse = new Response(sentence);
+////                String[] parts = sentence.split(";");
+//
+//                System.out.println("Adding response to FrontEndImplementation:");
+//                servant.addReceivedResponse(rmResponse);
+////                DatagramPacket reply = new DatagramPacket(response.getData(), response.getLength(), response.getAddress(),
+////                        response.getPort());
+////                aSocket.send(reply);
 //            }
-//            aSocket.joinGroup(InetAddress.getByName("230.1.1.5"));
-            aSocket = new DatagramSocket(FE_PORT, desiredAddress);
-            byte[] buffer = new byte[1000];
-            System.out.println("FE Server Started on " + desiredAddress + ":" + FE_PORT + "............");
+//
+//        } catch (SocketException e) {
+//            System.out.println("Socket: " + e.getMessage());
+//        } catch (IOException e) {
+//            System.out.println("IO: " + e.getMessage());
+//        } finally {
+////            if (aSocket != null)
+////                aSocket.close();
+//        }
+//    }
+
+    private static void listenForUDPResponses(DERMSServerImpl servant) {
+        ReliableUnicastReceiver<Response> receiver = null;
+        try {
+            // Initialize the ReliableUnicastReceiver to listen on the specified address and port
+            InetSocketAddress laddr = new InetSocketAddress(FE_IP_Address, FE_PORT);
+            receiver = new ReliableUnicastReceiver<>(laddr);
+
+            System.out.println("FE Server Started on " + FE_IP_Address + ":" + FE_PORT + "............");
 
             while (true) {
-                DatagramPacket response = new DatagramPacket(buffer, buffer.length);
-                aSocket.receive(response);
-                String sentence = new String(response.getData(), 0,
-                        response.getLength()).trim();
-                System.out.println("FE:Response received from Rm>>>" + sentence);
-                Response rmResponse = new Response(sentence);
-//                String[] parts = sentence.split(";");
+                // Blocking call to receive a message from RM
+                Response response = receiver.receive();
+                System.out.println("FE: Response received from RM >>> " + response);
 
+                // Process the received response and add it to the servant
                 System.out.println("Adding response to FrontEndImplementation:");
-                servant.addReceivedResponse(rmResponse);
-//                DatagramPacket reply = new DatagramPacket(response.getData(), response.getLength(), response.getAddress(),
-//                        response.getPort());
-//                aSocket.send(reply);
+                servant.addReceivedResponse(response);
             }
-
-        } catch (SocketException e) {
-            System.out.println("Socket: " + e.getMessage());
         } catch (IOException e) {
             System.out.println("IO: " + e.getMessage());
+        } catch (InterruptedException e) {
+            System.out.println("Listener interrupted: " + e.getMessage());
+            Thread.currentThread().interrupt();
         } finally {
-//            if (aSocket != null)
-//                aSocket.close();
+            if (receiver != null) {
+                try {
+                    receiver.close();
+                    System.out.println("ReliableUnicastReceiver closed.");
+                } catch (IOException e) {
+                    System.out.println("Error closing ReliableUnicastReceiver: " + e.getMessage());
+                }
+            }
         }
     }
+
 }
