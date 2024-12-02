@@ -171,7 +171,11 @@ public class DERMSServerImpl implements DERMSInterface {
        Response res3 = null;
        Response res4 = null;
        for (Response response :responses) {
-           if (response.getSequenceID() == request.getSequenceNumber()) {
+           System.out.println("Response: " + response.getResponse());
+           System.out.println("Response ID: " + response.getRequestId());
+           System.out.println("Request ID: " + request.getId());
+           System.out.println("Response RM number: " + response.getRmNumber());
+           if (response.getRequestId() == request.getId()) {
                switch (response.getRmNumber()) {
                    case 1:
                        res1 = response;

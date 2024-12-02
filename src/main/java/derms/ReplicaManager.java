@@ -151,4 +151,6 @@ public class ReplicaManager {
             e.printStackTrace();
         }
     }
+
+    public int getReplicaId() { return replicaId; }
 }

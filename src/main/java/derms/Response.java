@@ -15,6 +15,7 @@ public class Response implements MessagePayload {
     private int duration = 0;
     private String udpMessage = "";
     private boolean isSuccess = false;
+    private int requestId;
 
     public Response(String udpMessage) {
         setUdpMessage(udpMessage.trim());
@@ -42,6 +43,15 @@ public class Response implements MessagePayload {
         setOldResourceID("");
         setOldResourceType("");
         setDuration(1);
+    }
+
+    public Response(Request req, int rmNumber, String response, boolean isSuccess) {
+        this.sequenceID = req.getSequenceNumber();
+        this.response = response;
+        this.rmNumber = rmNumber;
+        this.function = req.getFunction();
+        this.isSuccess = isSuccess;
+        this.requestId = req.getId();
     }
 
     @Override
@@ -153,6 +163,10 @@ public class Response implements MessagePayload {
         return isSuccess;
     }
 
+    public int getRequestId() { return requestId; }
+
+    public void setRequestId(int id) { requestId = id; }
+
     @Override
     public boolean equals(Object obj) {
         if (obj != null) {
@@ -166,5 +180,11 @@ public class Response implements MessagePayload {
             }
         }
         return false;
+    }
+
+    //Message Format: Sequence_id;FrontIpAddress;Message_Type;function(addResource,...);userID; newEventID;newEventType; oldEventID; oldEventType;bookingCapacity
+    @Override
+    public String toString() {
+        return getResponse();
     }
 }

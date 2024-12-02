@@ -14,6 +14,7 @@ public class Request implements MessagePayload {
     private int sequenceNumber = 0;
     private String MessageType = "00";
     private int retryCount = 1;
+    private int reqId;
 
     public Request(String function, String clientID) {
         setFunction(function);
@@ -122,6 +123,10 @@ public class Request implements MessagePayload {
     public void countRetry() {
         retryCount--;
     }
+
+    public int getId() { return reqId; }
+
+    public void setId(int id) { reqId = id; }
 
     //Message Format: Sequence_id;FrontIpAddress;Message_Type;function(addResource,...);userID; newEventID;newEventType; oldEventID; oldEventType;bookingCapacity
     @Override

@@ -93,7 +93,7 @@ public class Replica3 implements Replica{
             status = "Failure: " + request.getFunction() + ": " + e.getMessage();
         }
 
-        Response response = new Response(request.getSequenceNumber(), status);
+        Response response = new Response(request, replicaManager.getReplicaId(), status, false); // TODO
 //        log.info("Processed request " + request + "; response: " + response);
         replicaManager.sendResponseToFE(response);
     }

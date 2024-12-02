@@ -100,6 +100,7 @@ public class FE {
 
     private static int sendUnicastToSequencer(Request requestFromClient) {
         int sequenceID = sequenceIDGenerator.incrementAndGet();
+        requestFromClient.setId(sequenceID);
         try {
             sequencerSock.send(requestFromClient);
         } catch (IOException e) {
