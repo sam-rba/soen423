@@ -5,7 +5,7 @@ import derms.frontend.DERMSInterface;
 import java.net.MalformedURLException;
 
 public class ResponderClient extends CLI {
-    public static final String usage = "Usage: java derms.client.ResponderClientCLI <FE host>";
+    public static final String usage = "Usage: java derms.client.ResponderClient <FE host>";
 
     private final DERMSInterface server;
 
