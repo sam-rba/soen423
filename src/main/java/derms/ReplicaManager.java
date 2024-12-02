@@ -54,7 +54,7 @@ public class ReplicaManager {
                 replica = new derms.replica2.Replica2(new derms.replica2.City(), this);
                 break;
             case 3:
-                replica = new derms.replica2.Replica2(new derms.replica2.City(), this);
+                replica = new derms.replica3.Replica3(new derms.replica3.City(), this);
                 break;
             case 4:
                 replica = new derms.replica2.Replica2(new derms.replica2.City(), this);
