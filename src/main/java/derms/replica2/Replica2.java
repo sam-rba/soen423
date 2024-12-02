@@ -52,6 +52,10 @@ public class Replica2 implements Replica {
 		log.info("Created CoordinatorServer");
 	}
 
+	public Replica2(String city, ReplicaManager replicaManager) throws IOException {
+		this(new City(city), replicaManager);
+	}
+
 	@Override
 	public boolean isAlive() { return alive; }
 

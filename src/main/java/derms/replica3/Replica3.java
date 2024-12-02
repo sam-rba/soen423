@@ -47,6 +47,10 @@ public class Replica3 implements Replica{
         this.alive = true;
     }
 
+    public Replica3(String city, ReplicaManager replicaManager) throws IOException {
+        this(new City(city), replicaManager);
+    }
+
     @Override
     public boolean isAlive() { return alive; }
 

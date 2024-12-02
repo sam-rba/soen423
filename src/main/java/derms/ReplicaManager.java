@@ -21,8 +21,9 @@ import java.io.ObjectInputStream;
 import java.util.logging.Logger;
 
 public class ReplicaManager {
-    public static final String usage = "Usage: java ReplicaManager <replicaId> <frontEndIP>";
+    public static final String usage = "Usage: java ReplicaManager <replicaId> <city> <frontEndIP>";
     private final int replicaId;
+    private final String city;
     private Replica replica;
     private Response response;
     private final Logger log;
@@ -30,8 +31,9 @@ public class ReplicaManager {
     private ReliableUnicastSender<Response> unicastSender;
     private TotalOrderMulticastReceiver multicastReceiver;
 
-    public ReplicaManager(int replicaId, InetAddress frontEndIP) throws IOException {
+    public ReplicaManager(int replicaId, String city, InetAddress frontEndIP) throws IOException {
         this.replicaId = replicaId;
+        this.city = city;
         this.log = Logger.getLogger(getClass().getName());
         initUnicastSender(frontEndIP);
         initReplica();
@@ -48,16 +50,16 @@ public class ReplicaManager {
     private void initReplica() throws IOException {
         switch (replicaId) {
             case 1:
-                replica = new derms.replica2.Replica2(new derms.replica2.City(), this);
+                replica = new derms.replica2.Replica2(city, this);
                 break;
             case 2:
-                replica = new derms.replica2.Replica2(new derms.replica2.City(), this);
+                replica = new derms.replica2.Replica2(city, this);
                 break;
             case 3:
-                replica = new derms.replica3.Replica3(new derms.replica3.City(), this);
+                replica = new derms.replica3.Replica3(city, this);
                 break;
             case 4:
-                replica = new derms.replica2.Replica2(new derms.replica2.City(), this);
+                replica = new derms.replica2.Replica2(city, this);
                 break;
         }
         replica.startProcess();
@@ -135,16 +137,16 @@ public class ReplicaManager {
     }
 
     public static void main(String[] args) {
-        if (args.length < 2) {
+        if (args.length < 3) {
             System.err.println(usage);
             System.exit(1);
         }
 
-        int replicaId = Integer.parseInt(args[0]);
-
         try {
-            InetAddress frontEndIP = InetAddress.getByName(args[1]);
-            ReplicaManager replicaManager = new ReplicaManager(replicaId, frontEndIP);
+            int replicaId = Integer.parseInt(args[0]);
+            String city = args[1];
+            InetAddress frontEndIP = InetAddress.getByName(args[2]);
+            ReplicaManager replicaManager = new ReplicaManager(replicaId, city, frontEndIP);
             System.out.println("ReplicaManager " + replicaId + " is running.");
         } catch (IOException e) {
             System.err.println("Failed to start ReplicaManager: " + e.getMessage());
