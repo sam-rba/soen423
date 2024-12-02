@@ -4,6 +4,7 @@ import derms.Replica;
 import derms.ReplicaManager;
 import derms.Request;
 import derms.Response;
+import derms.util.ThreadPool;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
@@ -23,8 +24,9 @@ public class Replica2 implements Replica {
 	private final Logger log;
 	private final ResponderServer responderServer;
 	private final CoordinatorServer coordinatorServer;
-	private boolean alive;
 	private final ReplicaManager replicaManager;
+	private final ExecutorService pool;
+	private boolean alive = false;
 
 	public Replica2(City city, ReplicaManager replicaManager) throws IOException {
 		this.city = city;
@@ -33,6 +35,8 @@ public class Replica2 implements Replica {
 		this.servers = new Servers();
 		this.log = DermsLogger.getLogger(getClass());
 		this.replicaManager = replicaManager;
+		this.pool = Executors.newCachedThreadPool();
+
 		try {
 			this.responderServer = new ResponderServer(city, resources, servers);
 		} catch (IOException e) {
@@ -46,58 +50,6 @@ public class Replica2 implements Replica {
 			throw new IOException("Failed to create CoordinatorServer: "+e.getMessage());
 		}
 		log.info("Created CoordinatorServer");
-
-		log.info("Running");
-		log.config("Local address is "+localAddr.toString());
-
-		ExecutorService pool = Executors.newCachedThreadPool();
-
-		try {
-			pool.execute(new ResourceAvailability.Server(localAddr, resources));
-		} catch (IOException e) {
-			String msg = "Failed to start ResourceAvailability Server: "+e.getMessage();
-			log.severe(msg);
-			throw e;
-		}
-		try {
-			pool.execute(new RequestResource.Server(localAddr, resources));
-		} catch (IOException e) {
-			log.severe("Failed to start RequestResource Server: "+e.getMessage());
-			throw e;
-		}
-		try {
-			pool.execute(new FindResource.Server(localAddr, resources));
-		} catch (IOException e) {
-			log.severe("Failed to start FindResource Server: "+e.getMessage());
-			throw e;
-		}
-		try {
-			pool.execute(new ReturnResource.Server(localAddr, resources));
-		} catch (IOException e) {
-			log.severe("Failed to start ReturnResource Server: "+e.getMessage());
-			throw e;
-		}
-		try {
-			pool.execute(new SwapResource.Server(localAddr, resources, servers));
-		} catch (IOException e) {
-			log.severe("Failed to start SwapResource Server: "+e.getMessage());
-			throw e;
-		}
-
-		try {
-			pool.execute(new Announcer(announceGroup, localAddr, city));
-		} catch (IOException e) {
-			log.severe("Failed to start Announcer: "+e.getMessage());
-			throw e;
-		}
-		try {
-			pool.execute(new AnnounceListener(announceGroup, localAddr, servers));
-		} catch (IOException e) {
-			log.severe("Failed to start AnnounceListener: "+e.getMessage());
-			throw e;
-		}
-
-		this.alive = true;
 	}
 
 	@Override
@@ -105,7 +57,54 @@ public class Replica2 implements Replica {
 
 	@Override
 	public void startProcess() {
-		// TODO
+		try {
+			pool.execute(new ResourceAvailability.Server(localAddr, resources));
+		} catch (IOException e) {
+			String msg = "Failed to start ResourceAvailability Server: "+e.getMessage();
+			log.severe(msg);
+			return;
+		}
+		try {
+			pool.execute(new RequestResource.Server(localAddr, resources));
+		} catch (IOException e) {
+			log.severe("Failed to start RequestResource Server: "+e.getMessage());
+			return;
+		}
+		try {
+			pool.execute(new FindResource.Server(localAddr, resources));
+		} catch (IOException e) {
+			log.severe("Failed to start FindResource Server: "+e.getMessage());
+			return;
+		}
+		try {
+			pool.execute(new ReturnResource.Server(localAddr, resources));
+		} catch (IOException e) {
+			log.severe("Failed to start ReturnResource Server: "+e.getMessage());
+			return;
+		}
+		try {
+			pool.execute(new SwapResource.Server(localAddr, resources, servers));
+		} catch (IOException e) {
+			log.severe("Failed to start SwapResource Server: "+e.getMessage());
+			return;
+		}
+
+		try {
+			pool.execute(new Announcer(announceGroup, localAddr, city));
+		} catch (IOException e) {
+			log.severe("Failed to start Announcer: "+e.getMessage());
+			return;
+		}
+		try {
+			pool.execute(new AnnounceListener(announceGroup, localAddr, servers));
+		} catch (IOException e) {
+			log.severe("Failed to start AnnounceListener: "+e.getMessage());
+			return;
+		}
+
+		log.info("Running");
+		log.config("Local address is "+localAddr.toString());
+		alive = true;
 		log.info(getClass().getSimpleName() + " started.");
 	}
 
@@ -152,7 +151,6 @@ public class Replica2 implements Replica {
 
 	@Override
 	public void restart() {
-		// TODO
 		shutdown();
 		startProcess();
 	}
@@ -160,8 +158,11 @@ public class Replica2 implements Replica {
 	@Override
 	public int getId() { return 2; }
 
-	private void shutdown() {
-		// TODO
+	public void shutdown() {
+		log.info("Shutting down...");
+		ThreadPool.shutdown(pool, log);
+		alive = false;
+		log.info("Finished shutting down.");
 	}
 
 	private String addResource(Request request) {
