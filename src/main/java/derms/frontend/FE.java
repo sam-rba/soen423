@@ -11,6 +11,8 @@ import  derms.Response;
 import derms.net.runicast.ReliableUnicastReceiver;
 import derms.net.runicast.ReliableUnicastSender;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 //import constants.Constants;
@@ -19,7 +21,6 @@ public class FE {
     private static String sequencerIP = "localhost";
     private static ReliableUnicastSender<Request> sequencerSock;
     private static final String RM_Multicast_group_address = Config.group.toString();
-    private static final int FE_PORT = 1999;
     private static final int RM_Multicast_Port = 1234;
     public static String FE_Address = "http://localhost:8067/"+DERMSInterface.class.getSimpleName();
     private static final String FE_IP_Address = "localhost";
@@ -163,22 +164,26 @@ public class FE {
 //    }
 
     private static void listenForUDPResponses(DERMSServerImpl servant) {
-        ReliableUnicastReceiver<Response> receiver = null;
+        List<ReliableUnicastReceiver<Response>> receivers = new ArrayList<ReliableUnicastReceiver<Response>>();
         try {
-            // Initialize the ReliableUnicastReceiver to listen on the specified address and port
-            InetSocketAddress laddr = new InetSocketAddress(FE_IP_Address, FE_PORT);
-            receiver = new ReliableUnicastReceiver<>(laddr);
-
-            System.out.println("FE Server Started on " + FE_IP_Address + ":" + FE_PORT + "............");
+            // Initialize a receiver for each RM.
+            for (int port : Config.frontendResponsePorts) {
+                receivers.add(new ReliableUnicastReceiver<Response>(
+                        new InetSocketAddress(FE_IP_Address, port)));
+                System.out.println("FE listening for responses on " + FE_IP_Address + ":" + port + "...");
+            }
 
             while (true) {
-                // Blocking call to receive a message from RM
-                Response response = receiver.receive();
-                System.out.println("FE: Response received from RM >>> " + response);
+                // Receive a response from each RM.
+                for (ReliableUnicastReceiver<Response> receiver : receivers) {
+                    // Blocking call to receive a message from RM
+                    Response response = receiver.receive();
+                    System.out.println("FE: Response received from RM >>> " + response);
 
-                // Process the received response and add it to the servant
-                System.out.println("Adding response to FrontEndImplementation:");
-                servant.addReceivedResponse(response);
+                    // Process the received response and add it to the servant
+                    System.out.println("Adding response to FrontEndImplementation:");
+                    servant.addReceivedResponse(response);
+                }
             }
         } catch (IOException e) {
             System.out.println("IO: " + e.getMessage());
@@ -186,7 +191,7 @@ public class FE {
             System.out.println("Listener interrupted: " + e.getMessage());
             Thread.currentThread().interrupt();
         } finally {
-            if (receiver != null) {
+            for (ReliableUnicastReceiver<Response> receiver : receivers) {
                 try {
                     receiver.close();
                     System.out.println("ReliableUnicastReceiver closed.");

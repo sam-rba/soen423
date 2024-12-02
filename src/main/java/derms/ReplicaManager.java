@@ -25,17 +25,23 @@ public class ReplicaManager {
     private Replica replica;
     private Response response;
     private final Logger log;
-    private ReliableUnicastSender<Response> unicastSender = new ReliableUnicastSender<>(new InetSocketAddress("localhost", 1999));
+    private InetSocketAddress frontEndAddress;
+    private ReliableUnicastSender<Response> unicastSender;
     private TotalOrderMulticastReceiver multicastReceiver;
-    private final InetSocketAddress frontEndAddress;
 
     public ReplicaManager(int replicaId) throws IOException {
         this.replicaId = replicaId;
         this.log = Logger.getLogger(getClass().getName());
-        this.frontEndAddress = new InetSocketAddress("localhost", 1999);
+        initUnicastSender();
         initReplica();
         initMulticastReceiver();
         startHeartbeatThread();
+    }
+
+    private void initUnicastSender() throws IOException {
+        int frontEndPort = Config.frontendResponsePorts[replicaId - 1];
+        frontEndAddress = new InetSocketAddress("localhost", frontEndPort);
+        unicastSender = new ReliableUnicastSender<>(frontEndAddress);
     }
 
     private void initReplica() throws IOException {

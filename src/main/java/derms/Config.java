@@ -8,4 +8,7 @@ public class Config {
 
     // The multicast group of the RMs and sequencer.
     public static final InetSocketAddress group = new InetSocketAddress("225.5.5.6", 62311);
+
+    // Ports where the FE listens for responses from each RM.
+    public static final int[] frontendResponsePorts = {62312, 62313, 62314, 62315};
 }
