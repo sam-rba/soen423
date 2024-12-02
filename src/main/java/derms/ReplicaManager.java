@@ -21,21 +21,28 @@ import java.io.ObjectInputStream;
 import java.util.logging.Logger;
 
 public class ReplicaManager {
+    public static final String usage = "Usage: java ReplicaManager <replicaId> <frontEndIP>";
     private final int replicaId;
     private Replica replica;
     private Response response;
     private final Logger log;
-    private ReliableUnicastSender<Response> unicastSender = new ReliableUnicastSender<>(new InetSocketAddress("localhost", 1999));
+    private InetSocketAddress frontEndAddress;
+    private ReliableUnicastSender<Response> unicastSender;
     private TotalOrderMulticastReceiver multicastReceiver;
-    private final InetSocketAddress frontEndAddress;
 
-    public ReplicaManager(int replicaId) throws IOException {
+    public ReplicaManager(int replicaId, InetAddress frontEndIP) throws IOException {
         this.replicaId = replicaId;
         this.log = Logger.getLogger(getClass().getName());
-        this.frontEndAddress = new InetSocketAddress("localhost", 1999);
+        initUnicastSender(frontEndIP);
         initReplica();
         initMulticastReceiver();
         startHeartbeatThread();
+    }
+
+    private void initUnicastSender(InetAddress frontEndIP) throws IOException {
+        int frontEndPort = Config.frontendResponsePorts[replicaId - 1];
+        frontEndAddress = new InetSocketAddress(frontEndIP, frontEndPort);
+        unicastSender = new ReliableUnicastSender<>(frontEndAddress);
     }
 
     private void initReplica() throws IOException {
@@ -128,15 +135,16 @@ public class ReplicaManager {
     }
 
     public static void main(String[] args) {
-        if (args.length != 1) {
-            System.err.println("Usage: java ReplicaManager <replicaId>");
+        if (args.length < 2) {
+            System.err.println(usage);
             System.exit(1);
         }
 
         int replicaId = Integer.parseInt(args[0]);
 
         try {
-            ReplicaManager replicaManager = new ReplicaManager(replicaId);
+            InetAddress frontEndIP = InetAddress.getByName(args[1]);
+            ReplicaManager replicaManager = new ReplicaManager(replicaId, frontEndIP);
             System.out.println("ReplicaManager " + replicaId + " is running.");
         } catch (IOException e) {
             System.err.println("Failed to start ReplicaManager: " + e.getMessage());
