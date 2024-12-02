@@ -14,6 +14,7 @@ import derms.replica2.Replica2;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.net.Socket;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
@@ -58,7 +59,8 @@ public class ReplicaManager {
     private void initMulticastReceiver() throws IOException {
         InetSocketAddress group = Config.group;
         InetAddress localAddress = InetAddress.getLocalHost(); // Your local address
-        multicastReceiver = new TotalOrderMulticastReceiver<Request>(group, localAddress);
+        NetworkInterface netInterface = NetworkInterface.getByInetAddress(localAddress);
+        multicastReceiver = new TotalOrderMulticastReceiver<Request>(group, localAddress, netInterface);
 
         new Thread(() -> {
             while (true) {

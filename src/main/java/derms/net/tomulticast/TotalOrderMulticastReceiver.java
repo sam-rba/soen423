@@ -6,6 +6,7 @@ import derms.util.ThreadPool;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.time.Duration;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
@@ -21,6 +22,23 @@ public class TotalOrderMulticastReceiver<T extends MessagePayload> {
 
     /**
      * Join the specified totally-ordered multicast group as a receiver.
+     *
+     * @param group The IP address and port of the multicast group.
+     * @param laddr The IP address of the local process.
+     * @param ifs The network interface to use.
+     */
+    public TotalOrderMulticastReceiver(InetSocketAddress group, InetAddress laddr, NetworkInterface ifs) throws IOException {
+        this.deliver = new LinkedBlockingQueue<Message<T>>();
+        this.log = Logger.getLogger(getClass().getName());
+
+        this.pool = Executors.newSingleThreadExecutor();
+        this.receiver = new Receive<T>(group, laddr, deliver, ifs);
+        pool.execute(receiver);
+    }
+
+    /**
+     * Join the specified totally-ordered multicast group as a receiver using the
+     * default network interface of the machine.
      *
      * @param group The IP address and port of the multicast group.
      * @param laddr The IP address of the local process.

@@ -5,6 +5,7 @@ import derms.net.MessagePayload;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
@@ -16,6 +17,12 @@ import java.util.concurrent.PriorityBlockingQueue;
 class Receive<T extends MessagePayload> extends TotalOrderMulticast<T> implements Runnable {
     private final PriorityBlockingQueue<Message<T>> holdback;
     private final BlockingQueue<Message<T>> deliver;
+
+    Receive(InetSocketAddress group, InetAddress laddr, BlockingQueue<Message<T>> deliver, NetworkInterface ifs) throws IOException {
+        super(group, laddr, ifs);
+        this.holdback = new PriorityBlockingQueue<Message<T>>();
+        this.deliver = deliver;
+    }
 
     Receive(InetSocketAddress group, InetAddress laddr, BlockingQueue<Message<T>> deliver) throws IOException {
         super(group, laddr);
