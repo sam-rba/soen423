@@ -9,14 +9,12 @@ import javax.xml.ws.Service;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public abstract class Client {
+class Client {
     public static final String namespace = "frontend.derms";
     public static final QName qname = new QName("http://"+namespace+"/", DERMSServerImpl.class.getSimpleName()+"Service");
 
-    protected final DERMSInterface server;
-
-    protected Client(String FEhost) throws MalformedURLException {
+    static DERMSInterface connectToServer(String FEhost) throws MalformedURLException {
         URL url = new URL(FE.endpointURL(FEhost) + "?wsdl");
-        this.server = Service.create(url, qname).getPort(DERMSInterface.class);
+        return Service.create(url, qname).getPort(DERMSInterface.class);
     }
 }
