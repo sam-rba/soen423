@@ -16,12 +16,12 @@ class CoordinatorID implements Serializable {
   }
 
   static CoordinatorID parse(String str) throws IllegalArgumentException {
-    if (str.length() != City.codeLen+ID.nDigits)
+    if (str.length() != City.codeLen+1+ID.nDigits)
       throw new IllegalArgumentException("illegal coordinator ID: " + str);
 
     try {
       String city = str.substring(0, City.codeLen);
-      short num = Short.parseShort(str.substring(City.codeLen));
+      short num = Short.parseShort(str.substring(City.codeLen+1));
       return new CoordinatorID(city, num);
     } catch (NumberFormatException e) {
       throw new IllegalArgumentException("illegal coordinator ID '" + str + "': " + e.getMessage());
