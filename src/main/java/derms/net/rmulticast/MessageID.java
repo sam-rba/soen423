@@ -1,6 +1,8 @@
 package derms.net.rmulticast;
 
-class MessageID {
+import java.io.Serializable;
+
+class MessageID implements Serializable {
     int id;
 
     MessageID(int id) {

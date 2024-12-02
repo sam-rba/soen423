@@ -57,6 +57,7 @@ class Heartbeat implements Runnable {
                 nacks.toArray(new MessageID[0]));
         ByteBuffer buf = Serial.encode(msg);
         sock.send(buf, group);
+        log.info("Sent " + msg);
         acks.clear();
     }
 }
