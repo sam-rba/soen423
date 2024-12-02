@@ -8,3 +8,4 @@
 *.toc
 javadoc
 target
+.DS_Store
