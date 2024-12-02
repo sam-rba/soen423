@@ -15,13 +15,11 @@ public class ResponderClient extends Client {
             System.exit(1);
         }
 
-//        String FEhost = args[0];
-        String FEhost = "localhost";
+        String FEhost = args[0];
 
         ResponderClient client = null;
         try {
             client = new ResponderClient(FEhost);
-//            client = new ResponderClient("localhost");
         } catch (MalformedURLException e) {
             System.err.println(e.getMessage());
             System.exit(1);
