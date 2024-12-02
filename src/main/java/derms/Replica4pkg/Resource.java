@@ -1,5 +1,5 @@
 //Resource.java
-package derms.Replica3pkg;
+package derms.Replica4pkg;
 
 import java.io.Serializable;
 

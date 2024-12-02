@@ -1,5 +1,5 @@
 //Server.java
-package derms.Replica3pkg;
+package derms.Replica4pkg;
 
 import javax.jws.WebService;
 import javax.jws.WebMethod;
@@ -464,7 +464,7 @@ public class Server implements DERMSInterface {
     }
 
     //Logging method
-    private synchronized void log(String message) {
+    public synchronized void log(String message) {
         String logMessage = new Date() + " - " + message;
         System.out.println(logMessage);
 

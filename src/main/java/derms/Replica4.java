@@ -1,30 +1,19 @@
 package derms;
 
-import derms.Replica3pkg.CoordinatorClient;
-import derms.Replica3pkg.RemoteServer;
-import derms.Replica3pkg.ResponderClient;
-import derms.Replica3pkg.Server;
-import derms.net.runicast.ReliableUnicastSender;
-import derms.Replica;
-import derms.ReplicaManager;
-import derms.Request;
-import derms.Response;
-import javax.xml.ws.Endpoint;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
+//import derms.Replica3pkg.ResponderClient;
+import java.io.*;
+import java.util.*;
 
-public class Replica3 implements Replica {
+import derms.Replica4pkg.RemoteServer;
+
+public class Replica4 implements Replica {
 
     private ReplicaManager replicaManager;
     private RemoteServer remoteServer;
     private boolean alive = true;
     
-    public Replica3(ReplicaManager replicaManager){
+    public Replica4(ReplicaManager replicaManager){
         this.replicaManager = replicaManager;
-        this.remoteServer = new RemoteServer();
     }
 
     @Override
@@ -34,7 +23,8 @@ public class Replica3 implements Replica {
 
     @Override
     public void startProcess() {
-        
+        this.remoteServer = new RemoteServer();
+        System.out.println("[Replica 4] Process started.");
     }
 
     @Override
@@ -79,22 +69,40 @@ public class Replica3 implements Replica {
                 break;
             default:
                 responseMessage = "Unrecognized function: " + request.getFunction();
-                log.severe("Unrecognized function in request: " + request.getFunction());
+                log("Unrecognized function in request: " + request.getFunction());
                 break;
         }
 
         Response response = new Response(request.getSequenceNumber(), responseMessage);
-        log.info("Replica " + 3 + " processed request: " + request + ", response: " + response);
+        log("Replica " + 4 + " processed request: " + request + ", response: " + response);
         replicaManager.sendResponseToFE(response);
     }
 
     @Override
     public void restart() {
+        shutDown();
+        startProcess();
+    }
 
+    public void shutDown(){
+        this.remoteServer.stopServers();
     }
 
     @Override
     public int getId() {
-        return 3;
+        return 4;
+    }
+
+    public synchronized void log(String message) {
+        String logMessage = new Date() + " - " + message;
+        System.out.println(logMessage);
+
+        try (FileWriter fw = new FileWriter("Replica4_log.txt", true);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw)) {
+            out.println(logMessage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

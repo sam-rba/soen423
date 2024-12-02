@@ -1,10 +1,12 @@
 //RemoteServer.java
-package derms.Replica3pkg;
+package derms.Replica4pkg;
 
 import javax.xml.ws.Endpoint;
 import java.util.*;
 
 public class RemoteServer {
+    private List<Endpoint> endpoints = new ArrayList<>();
+
     public RemoteServer() {
         try {
             Map<String, Integer> UDPPorts = new HashMap<>();
@@ -20,7 +22,8 @@ public class RemoteServer {
                 server.initServer(serverName, UDPPort, UDPPorts);
                 int port = 8080 + i;
                 String url = "http://localhost:" + port + "/DERMS/" + serverName;
-                Endpoint.publish(url, server);
+                Endpoint endpoint = Endpoint.publish(url, server);
+                endpoints.add(endpoint);  // Keep track of the Endpoint
                 i++;
                 System.out.println(serverName + " Server ready and waiting ...");
             }
@@ -28,5 +31,13 @@ public class RemoteServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // Method to stop all servers
+    public void stopServers() {
+        for (Endpoint endpoint : endpoints) {
+            endpoint.stop();
+        }
+        System.out.println("All servers have been stopped.");
     }
 }
