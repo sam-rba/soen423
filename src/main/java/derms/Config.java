@@ -3,6 +3,9 @@ package derms;
 import java.net.InetSocketAddress;
 
 public class Config {
+    // The port where the FE publishes the web service endpoint.
+    public static final int frontendEndpointPort = 8067;
+
     // The port where the sequencer listens for requests from the FE.
     public static final int sequencerInPort = 62310;
 

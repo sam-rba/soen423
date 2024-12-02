@@ -18,19 +18,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 //import constants.Constants;
 
 public class FE {
-    private static String sequencerIP = "localhost";
+    public static final String usage = "Usage: java FE <FE IP> <Sequencer IP>";
+    private static String frontendIP;
+    private static String sequencerIP;
     private static ReliableUnicastSender<Request> sequencerSock;
     private static final String RM_Multicast_group_address = Config.group.toString();
     private static final int RM_Multicast_Port = 1234;
-    public static String FE_Address = "http://localhost:8067/"+DERMSInterface.class.getSimpleName();
-    private static final String FE_IP_Address = "localhost";
-
     private static AtomicInteger sequenceIDGenerator = new AtomicInteger(0);
-//    public static String FE_IP_Address = "localhost";
 
     public static void main(String[] args) {
         try {
-            sequencerIP = args[0];
+            if (args.length < 2) {
+                System.out.println(usage);
+                return;
+            }
+            frontendIP = args[0];
+            sequencerIP = args[1];
             System.out.println("Connecting to sequencer ("
                     + sequencerIP + ":" + Config.sequencerInPort + ")...");
             sequencerSock = new ReliableUnicastSender<Request>(
@@ -69,7 +72,7 @@ public class FE {
                 }
             };
             DERMSServerImpl servant = new DERMSServerImpl(inter);
-            Endpoint endpoint = Endpoint.publish(FE_Address, servant);
+            Endpoint endpoint = Endpoint.publish(endpointURL(frontendIP), servant);
             Runnable task = () -> {
                 listenForUDPResponses(servant);
                 try {
@@ -88,6 +91,11 @@ public class FE {
 
 //        System.out.println("FrontEnd Server Shutting down");
 //        Logger.serverLog(serverID, " Server Shutting down");
+    }
+
+    // The URL where the web service endpoint is published.
+    public static String endpointURL(String frontendHost) {
+        return "http://" + frontendHost + ":" + Config.frontendEndpointPort + "/" + DERMSInterface.class.getSimpleName();
     }
 
     private static int sendUnicastToSequencer(Request requestFromClient) {
@@ -169,8 +177,8 @@ public class FE {
             // Initialize a receiver for each RM.
             for (int port : Config.frontendResponsePorts) {
                 receivers.add(new ReliableUnicastReceiver<Response>(
-                        new InetSocketAddress(FE_IP_Address, port)));
-                System.out.println("FE listening for responses on " + FE_IP_Address + ":" + port + "...");
+                        new InetSocketAddress(frontendIP, port)));
+                System.out.println("FE listening for responses on " + frontendIP + ":" + port + "...");
             }
 
             while (true) {
