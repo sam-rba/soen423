@@ -14,6 +14,16 @@ public class ResponderClientCLI extends CLI {
         cmdDescriptions.add(new Description(
                 "add <resource ID> <resource type> <duration>",
                 "Add ad resource to the server"));
+
+        commands.put("remove", new Remove());
+        cmdDescriptions.add(new Description(
+                "remove <resource ID> <duration>",
+                "Decrease the duration of a resource. If duration is negative, the resource is removed entirely."));
+
+        commands.put("list", new List());
+        cmdDescriptions.add(new Description(
+                "list <resource name>",
+                "List available resources"));
     }
 
     public static void main(String[] args) {
@@ -34,19 +44,57 @@ public class ResponderClientCLI extends CLI {
     private class Add implements Command {
         @Override
         public void exec(String[] args) {
-            if (args.length < 3) {
+            if (args.length < 3)
                 System.out.println("invalid arguments for 'add'");
-            } else {
+            else
                 add(args[0], args[1], args[2]);
-            }
         }
 
         private void add(String resourceID, String resourceName, String durationStr) {
-            int duration = Integer.parseInt(durationStr);
-            if (duration < 0) {
-                throw new NumberFormatException("duration less than 0");
+            try {
+                int duration = Integer.parseInt(durationStr);
+                if (duration < 0) {
+                    throw new NumberFormatException("duration less than 0");
+                }
+                String response = client.addResource(resourceID, resourceName, duration);
+                System.out.println(response);
+            } catch (NumberFormatException e) {
+                System.out.println("invalid duration: " + durationStr);
             }
-            String response = client.addResource(resourceID, resourceName, duration);
+        }
+    }
+
+    private class Remove implements Command {
+        @Override
+        public void exec(String[] args) {
+            if (args.length < 2)
+                System.out.println("invalid arguments for 'remove'");
+            else
+                remove(args[0], args[1]);
+        }
+
+        private void remove(String resourceID, String durationStr) {
+            try {
+                int duration = Integer.parseInt(durationStr);
+                String response = client.removeResource(resourceID, duration);
+                System.out.println(response);
+            } catch (NumberFormatException e) {
+                System.out.println("invalid duration: " + durationStr);
+            }
+        }
+    }
+
+    private class List implements Command {
+        @Override
+        public void exec(String[] args) {
+            if (args.length < 1)
+                System.out.println("invalid arguments for 'list'");
+            else
+                list(args[0]);
+        }
+
+        private void list(String resourceName) {
+            String response = client.listResourceAvailability(resourceName);
             System.out.println(response);
         }
     }
