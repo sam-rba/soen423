@@ -7,7 +7,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-@WebService(endpointInterface = "org.DERMS.DERMSInterface")
+@WebService(endpointInterface = "derms.Replica4pkg.DERMSInterface")
 public class Server implements DERMSInterface {
     private String serverName;
     private int udpPort;
