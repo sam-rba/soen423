@@ -189,8 +189,20 @@ public class Replica2 implements Replica {
 	}
 
 	private String listResourceAvailability(Request request) {
-		// TODO
-		throw new NotImplementedException();
+		try {
+			Resource[] resources = responderServer.listResourceAvailability(
+					ResourceType.parse(request.getResourceType()));
+			StringBuilder result = new StringBuilder();
+			result.append(request.getResourceType());
+			for (Resource resource : resources) {
+				result.append(" " + resource.id + "-" + resource.duration);
+			}
+			return result.toString();
+		} catch (ServerCommunicationError e) {
+			String msg = "Error listing resources: " + e.getMessage();
+			log.warning(msg);
+			return msg;
+		}
 	}
 
 	private String requestResource(Request request) {
