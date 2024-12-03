@@ -9,6 +9,8 @@ import derms.replica1.DERMSServerPublisher;
 import org.junit.jupiter.api.*;
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.nio.file.*;
 import java.util.*;
 import derms.util.*;
@@ -27,7 +29,6 @@ class SystemTest {
     // [TODO]
     //  input IP and NET config
     private static String IP = "127.0.0.1";
-    private static String NET = "en0";
 
     @BeforeEach
     void clearLogFile() throws IOException {
@@ -37,7 +38,6 @@ class SystemTest {
     @BeforeAll
     static void runMains() throws IOException {
         String[] argsFE = {IP, IP};
-        String[] argsSQ = {IP, NET};
 
         Thread feThread = new Thread(() -> {
             try {
@@ -50,7 +50,10 @@ class SystemTest {
 
         Thread sequencerThread = new Thread(() -> {
             try {
-                Sequencer.main(argsSQ);
+                InetAddress ip = InetAddress.getByName(IP);
+                NetworkInterface netIfc = NetworkInterface.getByInetAddress(ip);
+                Sequencer sequencer = new Sequencer(ip, netIfc);
+                sequencer.run();
             } catch (Exception e) {
                 e.printStackTrace();
             }
