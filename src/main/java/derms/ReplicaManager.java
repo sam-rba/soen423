@@ -19,6 +19,7 @@ import java.net.NetworkInterface;
 import java.net.Socket;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public class ReplicaManager {
@@ -92,7 +93,11 @@ public class ReplicaManager {
                     MessagePayload receivedPayload = multicastReceiver.receive();
                     Request request = (Request) receivedPayload;
                     log.info("Received request: " + request);
-                    replica.processRequest(request);
+                    if (Objects.equals(request.getMessageType(), "1" + replicaId)) {
+                        handleByzantineFailure();
+                    } else {
+                        replica.processRequest(request);
+                    }
                 } catch (InterruptedException e) {
                     log.severe("Failed to receive request: " + e.getMessage());
                     Thread.currentThread().interrupt();
