@@ -56,13 +56,15 @@ public class CoordinatorClient {
         return Collections.emptyList();
     }
 
-    public void returnResource(String coordinatorID, String resourceID) {
+    public String returnResource(String coordinatorID, String resourceID) {
         try {
             String response = server.returnResource(coordinatorID, resourceID);
             System.out.println(response);
             logOperation("returnResource", coordinatorID, resourceID, response);
+            return response;
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
     public String swapResource(String coordinatorID, String oldResourceID, String oldResourceType, String newResourceID, String newResourceType) {

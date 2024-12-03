@@ -22,7 +22,11 @@ public class Replica1 implements Replica {
     private final Logger log;
     private final InetAddress localAddr;
     private final ResponderClient responderClient;
+    private final CoordinatorClient coordinatorClient;
+    private final String responderClientID = "MTL";
+    private final String coordinatorClientID = "MTLC1111";
     private final ReplicaManager replicaManager;
+    private DERMSServer server;
     private boolean byzFailure;
 
     public Replica1(ReplicaManager replicaManager) {
@@ -33,7 +37,8 @@ public class Replica1 implements Replica {
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
-        responderClient = new ResponderClient("MTL");
+        responderClient = new ResponderClient(responderClientID);
+        coordinatorClient = new CoordinatorClient(coordinatorClientID);
         try {
             this.log = DermsLogger.getLogger(getClass());
         } catch (IOException e) {
@@ -62,8 +67,22 @@ public class Replica1 implements Replica {
             byzFailure = false;
         }
 
-        pool.execute(DERMSServer::new);
-        //alive = true;
+        try {
+            server = new DERMSServer("MTL");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            new DERMSServer("SHE");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            new DERMSServer("QUE");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         log.info(getClass().getSimpleName() + " started.");
         log.config("Local address is "+localAddr.toString());
     }
@@ -77,12 +96,44 @@ public class Replica1 implements Replica {
             return;
         }
 
-        String status = responderClient.addResource(
-                request.getResourceID(),
-                request.getResourceType(),
-                request.getDuration()
-        );
-        Response response = new Response(request.getSequenceNumber(), status);
+        log.info(request.toString());
+
+        String status = "";
+        boolean isSuccess = true;
+        try {
+            switch (request.getFunction()) {
+                case "addResource":
+                    status = server.addResource(request.getResourceID(), request.getResourceType(), request.getDuration());
+                    break;
+                case "removeResource":
+                    status = server.removeResource(request.getResourceID(), request.getDuration());
+                    break;
+                case "listResourceAvailability":
+//                    status = String.join(",", responderClient.listResourceAvailability(request.getResourceType()));
+                   status = String.join(",", server.listResourceAvailability(request.getResourceType()));
+                    break;
+                case "requestResource":
+                    status = server.requestResource(coordinatorClientID, request.getResourceID(), request.getDuration());
+                    break;
+                case "findResource":
+                    status = String.join(",", server.findResource(coordinatorClientID, request.getResourceType()));
+                    break;
+                case "returnResource":
+                    status = server.returnResource(coordinatorClientID, request.getResourceID());
+                    break;
+                case "swapResource":
+                    status = server.swapResource(coordinatorClientID, request.getOldResourceID(), request.getOldResourceType(), request.getResourceID(), request.getResourceType());
+                    break;
+                default:
+                    status = "Failure: unknown function '" + request.getFunction() + "'";
+            }
+        } catch (Exception e) {
+            log.warning(e.getMessage());
+            status = "Failure: " + request.getFunction() + ": " + e.getMessage();
+            isSuccess = false;
+        }
+
+        Response response = new Response(request, replicaManager.getReplicaId(), status, isSuccess); // TODO: isSuccess flag
         log.info("Processed request " + request + "; response: " + response);
         replicaManager.sendResponseToFE(response);
     }

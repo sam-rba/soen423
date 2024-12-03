@@ -22,17 +22,22 @@ public class DERMSServer implements DERMSInterface {
 
     private static List<String> cities = Arrays.asList("MTL", "QUE", "SHE");
     private static List<String> resourceNames = Arrays.asList("AMBULANCE", "FIRETRUCK", "PERSONNEL");
+    private final Random r = new Random();
+    private final Map<String, Integer> portsMap = new HashMap<String, Integer>() {{
+        put("MTL", r.nextInt(60000-8000) + 8000);
+        put("QUE", r.nextInt(60000-8000) + 8000);
+        put("SHE", r.nextInt(60000-8000) + 8000);
+    }};
 
     public DERMSServer() {
         // Default constructor to support JAX-WS
-        super();
-        this.serverID = "MTL";
-        resources = new HashMap<>();
-        new Thread(this::listenForMessages).start();
+//        super();
+//        this.serverID = "MTL";
+//        resources = new HashMap<>();
+//        new Thread(this::listenForMessages).start();
     }
 
     public DERMSServer(String serverID) throws InterruptedException {
-        super();
         this.serverID = serverID;
         resources = new HashMap<>();
         new Thread(this::listenForMessages).start();
@@ -40,7 +45,7 @@ public class DERMSServer implements DERMSInterface {
     }
 
     private void listenForMessages() {
-        try (DatagramSocket socket = new DatagramSocket()) {
+        try (DatagramSocket socket = new DatagramSocket(getServerPortsFromCentralRepo().get(serverID))) {
             this.serverPort.set(socket.getLocalPort());
             byte[] buffer = new byte[1024];
 
@@ -216,11 +221,7 @@ public class DERMSServer implements DERMSInterface {
 
     private Map<String, Integer> getServerPortsFromCentralRepo() {
         // Mocking response as web services since no derms.CentralRepoInterface.
-        return new HashMap<String, Integer>() {{
-            put("MTL", 4321);
-            put("QUE", 4322);
-            put("SHE", 4323);
-        }};
+        return new HashMap<>(portsMap);
     }
 
     @Override

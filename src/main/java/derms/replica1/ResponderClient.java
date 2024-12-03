@@ -59,13 +59,15 @@ public class ResponderClient {
         }
     }
 
-    public void removeResource(String resourceID, int duration) {
+    public String removeResource(String resourceID, int duration) {
         try {
             String response = server.removeResource(resourceID, duration);
             System.out.println(response);
             logOperation("removeResource", resourceID, duration, response);
+            return response;
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
