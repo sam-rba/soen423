@@ -27,6 +27,7 @@ public class Replica3 implements Replica{
 //    private final Logger log;
 
     private boolean alive;
+    private boolean byzFailure;
     private final ReplicaManager replicaManager;
 
     public Replica3(City city, ReplicaManager replicaManager) throws IOException {
@@ -42,6 +43,7 @@ public class Replica3 implements Replica{
 //        log.config("Local address is "+localAddr.toString());
 
         this.alive = true;
+        this.byzFailure = false;
     }
 
     public Replica3(String city, ReplicaManager replicaManager) throws IOException {
@@ -53,6 +55,20 @@ public class Replica3 implements Replica{
 
     @Override
     public void startProcess(int byzantine, int crash) {
+        // [TEST] Detect crash
+        if (crash == 1) {
+            alive = false;
+        } else {
+            alive = true;
+        }
+
+        // [TEST] Detect byzantine failure
+        if (byzantine == 1) {
+            byzFailure = true;
+        } else {
+            byzFailure = false;
+        }
+
         // TODO
 //        log.info(getClass().getSimpleName() + " started.");
         System.out.println("process started");
@@ -61,6 +77,14 @@ public class Replica3 implements Replica{
     @Override
     public void processRequest(Request request) {
 //        log.info(request.toString());
+
+        // [TEST] Simulate byzantine failure (return incorrect value)
+        if (byzFailure == true) {
+            Response response = new Response(request, replicaManager.getReplicaId(), "BYZANTINE FAILURE", false);
+            replicaManager.sendResponseToFE(response);
+            return;
+        }
+
         System.out.println("process request and good");
         String status = "";
         try {
@@ -104,6 +128,8 @@ public class Replica3 implements Replica{
     public void restart() {
         // TODO
         shutdown();
+
+        // [TEST] Restart process without byzantine failure or crash
         startProcess(0, 0);
     }
 
@@ -112,6 +138,7 @@ public class Replica3 implements Replica{
 
     private void shutdown() {
         // TODO
+        alive = false;
     }
 
     public synchronized String addResource(String resourceID, String resourceName, int duration) {

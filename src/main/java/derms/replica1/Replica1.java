@@ -22,6 +22,7 @@ public class Replica1 implements Replica {
     private final InetAddress localAddr;
     private final ResponderClient responderClient;
     private final ReplicaManager replicaManager;
+    private boolean byzFailure;
 
     public Replica1(ReplicaManager replicaManager) {
         this.replicaManager = replicaManager;
@@ -46,6 +47,20 @@ public class Replica1 implements Replica {
 
     @Override
     public void startProcess(int byzantine, int crash) {
+         // [TEST] Detect crash
+         if (crash == 1) {
+            alive = false;
+        } else {
+            alive = true;
+        }
+
+        // [TEST] Detect byzantine failure
+        if (byzantine == 1) {
+            byzFailure = true;
+        } else {
+            byzFailure = false;
+        }
+
         pool.execute(DERMSServer::new);
         alive = true;
         log.info(getClass().getSimpleName() + " started.");
@@ -54,6 +69,13 @@ public class Replica1 implements Replica {
 
     @Override
     public void processRequest(Request request) {
+        // [TEST] Simulate byzantine failure (return incorrect value)
+        if (byzFailure == true) {
+            Response response = new Response(request, replicaManager.getReplicaId(), "BYZANTINE FAILURE", false);
+            replicaManager.sendResponseToFE(response);
+            return;
+        }
+
         String status = responderClient.addResource(
                 request.getResourceID(),
                 request.getResourceType(),
@@ -70,6 +92,8 @@ public class Replica1 implements Replica {
         ThreadPool.shutdown(pool, log);
         alive = false;
         log.info("Finished shutting down.");
+
+        // [TEST] Restart process without byzantine failure or crash
         startProcess(0, 0);
     }
 
