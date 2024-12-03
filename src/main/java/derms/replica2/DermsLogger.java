@@ -6,12 +6,12 @@ import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-class DermsLogger {
+public class DermsLogger {
 	static final String logFile = "server.log";
 
 	private static Logger log = null;
 
-	static Logger getLogger(Class clazz) throws IOException {
+	public static Logger getLogger(Class clazz) throws IOException {
 		if (log == null) {
 			log = Logger.getLogger(clazz.getName());
 			Handler fileHandler = new FileHandler(logFile);

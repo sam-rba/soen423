@@ -1,7 +1,6 @@
 package derms;
 import derms.frontend.FEInterface;
 
-import derms.Replica1;
 
 import derms.Request;
 import derms.Response;
@@ -9,6 +8,7 @@ import derms.net.MessagePayload;
 import derms.net.tomulticast.TotalOrderMulticastReceiver;
 import derms.net.runicast.ReliableUnicastSender;
 import derms.net.tomulticast.TotalOrderMulticastSender;
+import derms.replica1.Replica1;
 import derms.replica2.Replica2;
 
 import java.io.IOException;
@@ -50,7 +50,7 @@ public class ReplicaManager {
     private void initReplica() throws IOException {
         switch (replicaId) {
             case 1:
-                replica = new derms.replica2.Replica2(city, this);
+                replica = new Replica1(this);
                 break;
             case 2:
                 replica = new derms.replica2.Replica2(city, this);
