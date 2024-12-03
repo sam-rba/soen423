@@ -64,7 +64,7 @@ class SystemTest {
         DERMSServerPublisher.stop();
     }
 
-    /* @Test
+    @Test
     void testNormal() throws IOException {
         // Replica 1
         String[] argsRM = {"1", "MTL", IP, "0", "0"};
@@ -80,9 +80,9 @@ class SystemTest {
 
         // Compare the number of lines in the log files, to determine if they match or not
         assertTrue(LogComparator.compareFiles(TEST_LOG_PATH, EXPECTED_LOG_PATH_NORM));
-    } */
+    }
 
-    /* @Test
+    @Test
     void testByzantine() throws IOException {
         // Replica 1
         String[] argsRM = {"1", "MTL", IP, "1", "0"};
@@ -98,9 +98,9 @@ class SystemTest {
 
         // Compare the number of lines in the log files, to determine if they match or not
         assertTrue(LogComparator.compareFiles(TEST_LOG_PATH, EXPECTED_LOG_PATH_BYZ));
-    } */
+    }
 
-    /* @Test
+    @Test
     void testCrash() throws IOException {
         // Replica 1
         String[] argsRM = {"1", "MTL", IP, "0", "1"};
@@ -116,7 +116,7 @@ class SystemTest {
 
         // Compare the number of lines in the log files, to determine if they match or not
         assertTrue(LogComparator.compareFiles(TEST_LOG_PATH, EXPECTED_LOG_PATH_CRASH));
-    } */
+    }
 
     @Test
     void testCombined() throws IOException {
