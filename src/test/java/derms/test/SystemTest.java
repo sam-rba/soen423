@@ -28,7 +28,7 @@ class SystemTest {
 
     // [TODO]
     //  input IP and NET config
-    private static String IP = "127.0.0.1";
+    private static String IP = "172.16.62.225";
 
     @BeforeEach
     void clearLogFile() throws IOException {

@@ -14,7 +14,13 @@ public class ResponderClient {
     }
 
     public String addResource(String resourceID, String resourceName, int duration) {
-        return server.addResource(resourceID, resourceName, duration);
+        String res = server.addResource(resourceID, resourceName, duration);
+        if (res.contains("Fail")) {
+            TestLogger.log("[FAILED: " + res + "]");
+        } else {
+            TestLogger.log("[SUCCESS: " + res + "]");
+        }
+        return res;
     }
 
     public String removeResource(String resourceID, int duration) {

@@ -1,6 +1,7 @@
 package derms.client;
 
 import derms.frontend.DERMSInterface;
+import derms.util.TestLogger;
 
 import java.net.MalformedURLException;
 
