@@ -75,10 +75,10 @@ public class DERMSServerImpl implements DERMSInterface {
 
 	@Override
     public synchronized String listResourceAvailability(String resourceName) {
-        Request request = new Request("listEventAvailability", "");
+        Request request = new Request("listResourceAvailability", "");
         request.setResourceType(resourceName);
         request.setSequenceNumber(sendUdpUnicastToSequencer(request));
-        System.out.println("FE Implementation:listEventAvailability>>>" + request.toString());
+        System.out.println("FE Implementation:listResourceAvailability>>>" + request.toString());
         return validateResponses(request);
     }
 
