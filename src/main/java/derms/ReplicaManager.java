@@ -10,6 +10,7 @@ import derms.net.runicast.ReliableUnicastSender;
 import derms.net.tomulticast.TotalOrderMulticastSender;
 import derms.replica1.Replica1;
 import derms.replica2.Replica2;
+import derms.util.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -22,7 +23,7 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 public class ReplicaManager {
-    public static final String usage = "Usage: java ReplicaManager <replicaId> <city> <frontEndIP>";
+    public static final String usage = "Usage: java ReplicaManager <replicaId> <city> <replicaManagerIP> <frontEndIP> <byzantine(0 or 1)> <crash(0 or 1)>";
     private final int replicaId;
     private final String city;
     private Replica replica;
@@ -32,13 +33,13 @@ public class ReplicaManager {
     private ReliableUnicastSender<Response> unicastSender;
     private TotalOrderMulticastReceiver multicastReceiver;
 
-    public ReplicaManager(int replicaId, String city, InetAddress frontEndIP) throws IOException {
+    public ReplicaManager(int replicaId, String city, InetAddress replicaManagerIP, InetAddress frontEndIP, int byzantine, int crash) throws IOException {
         this.replicaId = replicaId;
         this.city = city;
         this.log = Logger.getLogger(getClass().getName());
         initUnicastSender(frontEndIP);
-        initReplica();
-        initMulticastReceiver();
+        initReplica(byzantine, crash);
+        initMulticastReceiver(replicaManagerIP);
         startHeartbeatThread();
     }
 
@@ -48,7 +49,7 @@ public class ReplicaManager {
         unicastSender = new ReliableUnicastSender<>(frontEndAddress);
     }
 
-    private void initReplica() throws IOException {
+    private void initReplica(int byzantine, int crash) throws IOException {
         switch (replicaId) {
             case 1:
                 replica = new Replica1(this);
@@ -63,14 +64,27 @@ public class ReplicaManager {
                 replica = new derms.replica2.Replica2(city, this);
                 break;
         }
-        replica.startProcess();
+
+        // [TEST] Logging
+        if (byzantine == 0) {
+            TestLogger.log("REPLICA " + replicaId + ": {BYZANTINE: FALSE}");
+        } else {
+            TestLogger.log("REPLICA " + replicaId + ": {BYZANTINE: TRUE}");
+        }
+
+        if (crash == 0) {
+            TestLogger.log("REPLICA " + replicaId + ": {CRASH: FALSE}");
+        } else {
+            TestLogger.log("REPLICA " + replicaId + ": {CRASH: TRUE}");
+        }
+
+        replica.startProcess(byzantine, crash);
     }
 
-    private void initMulticastReceiver() throws IOException {
+    private void initMulticastReceiver(InetAddress replicaManagerIP) throws IOException {
         InetSocketAddress group = Config.group;
-        InetAddress localAddress = InetAddress.getLocalHost(); // Your local address
-        NetworkInterface netInterface = NetworkInterface.getByInetAddress(localAddress);
-        multicastReceiver = new TotalOrderMulticastReceiver<Request>(group, localAddress, netInterface);
+        NetworkInterface netInterface = NetworkInterface.getByInetAddress(replicaManagerIP);
+        multicastReceiver = new TotalOrderMulticastReceiver<Request>(group, replicaManagerIP, netInterface);
 
         new Thread(() -> {
             while (true) {
@@ -97,8 +111,12 @@ public class ReplicaManager {
         new Thread(() -> {
             while (true) {
                 if (!replica.isAlive()) {
+                    // [TEST] Logging
+                    TestLogger.log("REPLICA " + replicaId + ": {CRASH: DETECTED}");
+
                     informFrontEndRmIsDown(replica.getId());
                     replica.restart();
+                    //TestLogger.log("REPLICA " + replicaId + ": {RESTARTED}");
                 }
                 try {
                     Thread.sleep(5000); // Example 5 seconds.
@@ -119,8 +137,13 @@ public class ReplicaManager {
 
     public void handleByzantineFailure() {
         log.severe("Byzantine failure detected in Replica " + replica.getId());
+
+        // [TEST] Logging
+        TestLogger.log("REPLICA " + replicaId + ": {BYZANTINE: DETECTED}");
+
         replica.restart();
         informFrontEndRmHasBug(replica.getId());
+        //TestLogger.log("REPLICA " + replicaId + ": {RESTARTED}");
     }
 
     private void informFrontEndRmIsDown(int replicaId) {
@@ -129,6 +152,7 @@ public class ReplicaManager {
             out.writeObject("RM_DOWN:" + replicaId);
         } catch (IOException e) {
             log.severe("Failed to inform FE that RM is down: " + e.getMessage());
+            TestLogger.log("[FAILED TO INFORM FE (RM IS DOWN)]");
         }
     }
 
@@ -138,11 +162,12 @@ public class ReplicaManager {
             out.writeObject("RM_BUG:" + replicaId);
         } catch (IOException e) {
             log.severe("Failed to inform FE that RM has a bug: " + e.getMessage());
+            TestLogger.log("[FAILED TO INFORM FE (RM HAS A BUG)]");
         }
     }
 
     public static void main(String[] args) {
-        if (args.length < 3) {
+        if (args.length < 4) {
             System.err.println(usage);
             System.exit(1);
         }
@@ -150,11 +175,15 @@ public class ReplicaManager {
         try {
             int replicaId = Integer.parseInt(args[0]);
             String city = args[1];
-            InetAddress frontEndIP = InetAddress.getByName(args[2]);
-            ReplicaManager replicaManager = new ReplicaManager(replicaId, city, frontEndIP);
+            InetAddress replicaManagerIP = InetAddress.getByName(args[2]);
+            InetAddress frontEndIP = InetAddress.getByName(args[3]);
+            int byzantine = Integer.parseInt(args[4]);
+            int crash = Integer.parseInt(args[5]);
+            ReplicaManager replicaManager = new ReplicaManager(replicaId, city, replicaManagerIP, frontEndIP, byzantine, crash);
             System.out.println("ReplicaManager " + replicaId + " is running.");
         } catch (IOException e) {
             System.err.println("Failed to start ReplicaManager: " + e.getMessage());
+            TestLogger.log("[FAILED TO START RM]");
             e.printStackTrace();
         }
     }

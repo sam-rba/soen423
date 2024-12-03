@@ -1,6 +1,7 @@
 package derms.replica2;
 
 import derms.*;
+import derms.util.TestLogger;
 import derms.util.ThreadPool;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -24,6 +25,7 @@ public class Replica2 implements Replica {
 	private final ReplicaManager replicaManager;
 	private final ExecutorService pool;
 	private boolean alive = false;
+	private boolean byzFailure;
 
 	public Replica2(City city, ReplicaManager replicaManager) throws IOException {
 		this.city = city;
@@ -57,7 +59,21 @@ public class Replica2 implements Replica {
 	public boolean isAlive() { return alive; }
 
 	@Override
-	public void startProcess() {
+	public void startProcess(int byzantine, int crash) {
+		// [TEST] Detect crash
+        if (crash == 1) {
+            alive = false;
+        } else {
+            alive = true;
+        }
+
+        // [TEST] Detect byzantine failure
+        if (byzantine == 1) {
+            byzFailure = true;
+        } else {
+            byzFailure = false;
+        }
+
 		try {
 			pool.execute(new ResourceAvailability.Server(localAddr, resources));
 		} catch (IOException e) {
@@ -105,13 +121,20 @@ public class Replica2 implements Replica {
 
 		log.info("Running");
 		log.config("Local address is "+localAddr.toString());
-		alive = true;
+		//alive = true;
 		log.info(getClass().getSimpleName() + " started.");
 	}
 
 	@Override
 	public void processRequest(Request request) {
 		log.info(request.toString());
+
+		// [TEST] Simulate byzantine failure (return incorrect value)
+        if (byzFailure == true) {
+            Response response = new Response(request, replicaManager.getReplicaId(), "BYZANTINE FAILURE", false);
+            replicaManager.sendResponseToFE(response);
+            return;
+        }
 
 		String status = "";
 		try {
@@ -153,7 +176,10 @@ public class Replica2 implements Replica {
 	@Override
 	public void restart() {
 		shutdown();
-		startProcess();
+
+		// [TEST] Restart process without byzantine failure or crash
+		TestLogger.log("REPLICA 2: {RESTARTED}");
+		startProcess(0, 0);
 	}
 
 	@Override

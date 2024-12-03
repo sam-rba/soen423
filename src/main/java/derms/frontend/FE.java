@@ -10,6 +10,7 @@ import derms.Request;
 import derms.Response;
 import derms.net.runicast.ReliableUnicastReceiver;
 import derms.net.runicast.ReliableUnicastSender;
+import derms.util.TestLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,7 @@ public class FE {
                     System.out.println("Rm:" + RmNumber + "has bug");
 //                    sendMulticastFaultMessageToRms(errorMessage);
                     sendUnicastToSequencer(errorMessage);
+                    //TestLogger.log("FE: {BYZANTINE: INFORM REPLICA" + RmNumber + "}");
                 }
 
                 @Override
@@ -60,6 +62,7 @@ public class FE {
                     System.out.println("Rm:" + RmNumber + "is down");
 //                    sendMulticastFaultMessageToRms(errorMessage);
                     sendUnicastToSequencer(errorMessage);
+                    //TestLogger.log("FE: {CRASH: INFORM REPLICA" + RmNumber + "}");
                 }
 
                 @Override

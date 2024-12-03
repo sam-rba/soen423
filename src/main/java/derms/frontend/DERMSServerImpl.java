@@ -5,10 +5,6 @@ package derms.frontend;
 //import model.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Optional;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +19,7 @@ import javax.jws.soap.SOAPBinding.Style;
 //import interfaces.DERMSInterface;
 import  derms.Request;
 import  derms.Response;
+import derms.util.TestLogger;
 @WebService(endpointInterface = "derms.frontend.DERMSInterface")
 public class DERMSServerImpl implements DERMSInterface {
 	

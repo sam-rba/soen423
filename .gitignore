@@ -3,7 +3,11 @@
 *.bbl
 *.bcf
 *.blg
-*.log
+QUEServer.log
+MTLServer.log
+SHEServer.log
+server.log
+SystemTest.log
 *.run.xml
 *.toc
 javadoc
