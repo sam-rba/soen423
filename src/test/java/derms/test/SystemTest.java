@@ -2,6 +2,7 @@ package derms.test;
 
 import derms.ReplicaManager;
 import derms.Sequencer;
+import derms.client.CoordinatorClient;
 import derms.client.ResponderClient;
 import derms.frontend.FE;
 import derms.replica1.DERMSServerPublisher;
@@ -80,6 +81,9 @@ class SystemTest {
         ResponderClient responderClient = new ResponderClient(IP);
         responderClient.addResource("MTL1001", "ambulance", 10);
 
+        CoordinatorClient coordinatorClient = new CoordinatorClient("MTLC1001", IP);
+        coordinatorClient.requestResource("MTL1001", 10);
+
         // Compare the number of lines in the log files, to determine if they match or not
         assertTrue(LogComparator.containsSuccess(TEST_LOG_PATH));
     }
@@ -97,6 +101,9 @@ class SystemTest {
         ResponderClient responderClient = new ResponderClient(IP);
         responderClient.addResource("MTL1001", "ambulance", 10);
 
+        CoordinatorClient coordinatorClient = new CoordinatorClient("MTLC1001", IP);
+        coordinatorClient.requestResource("MTL1001", 10);
+
         // Compare the number of lines in the log files, to determine if they match or not
         assertTrue(LogComparator.containsByzTrue(TEST_LOG_PATH));
     }
@@ -113,6 +120,9 @@ class SystemTest {
         ReplicaManager.main(argsRM);
         ResponderClient responderClient = new ResponderClient(IP);
         responderClient.addResource("MTL1001", "ambulance", 10);
+
+        CoordinatorClient coordinatorClient = new CoordinatorClient("MTLC1001", IP);
+        coordinatorClient.requestResource("MTL1001", 10);
 
         // Compare the number of lines in the log files, to determine if they match or not
         assertTrue(LogComparator.containsCrashTrue(TEST_LOG_PATH));
@@ -176,6 +186,12 @@ class SystemTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        CoordinatorClient coordinatorClient = new CoordinatorClient("MTLC1001", IP);
+        coordinatorClient.requestResource("MTL1001", 10);
+
+        CoordinatorClient coordinatorClient2 = new CoordinatorClient("MTLC1002", IP);
+        coordinatorClient2.requestResource("MTL1002", 10);
 
         // Compare the number of lines in the log files, to determine if they match or not
         assertTrue(LogComparator.containsCombTrue(TEST_LOG_PATH));
