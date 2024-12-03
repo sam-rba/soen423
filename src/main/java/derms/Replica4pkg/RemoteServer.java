@@ -18,8 +18,8 @@ public class RemoteServer {
                 int i = 0;
                 for (String serverName : serverNames) {
                     int UDPPort = UDPPorts.get(serverName);
-                    Server server = new Server();
-                    server.initServer(serverName, UDPPort, UDPPorts);
+                    Replica4 server = new Replica4(null);
+                    server.initReplica4(serverName, UDPPort, UDPPorts);
                     int port = 8080 + i;
                     String url = "http://localhost:" + port + "/DERMS/" + serverName;
                     Endpoint endpoint = Endpoint.publish(url, server);

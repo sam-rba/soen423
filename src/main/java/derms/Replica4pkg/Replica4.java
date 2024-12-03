@@ -13,7 +13,6 @@ import derms.ReplicaManager;
 import derms.Request;
 import derms.Response;
 import derms.util.TestLogger;
-import derms.util.ThreadPool;
 
 
 
