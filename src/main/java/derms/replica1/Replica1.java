@@ -7,9 +7,12 @@ import derms.Response;
 import derms.replica2.DermsLogger;
 import derms.util.ThreadPool;
 
+import javax.xml.ws.Endpoint;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -20,12 +23,15 @@ public class Replica1 implements Replica {
     private final ExecutorService pool;
     private final Logger log;
     private final InetAddress localAddr;
-    private final ResponderClient responderClient;
-    private final CoordinatorClient coordinatorClient;
+//    private final ResponderClient responderClient;
+//    private final CoordinatorClient coordinatorClient;
     private final String responderClientID = "MTL";
     private final String coordinatorClientID = "MTLC1111";
     private final ReplicaManager replicaManager;
     private DERMSServer server;
+    private final ConcurrentHashMap<String, Integer> portsMap;
+    private final Random r = new Random();
+
 
     public Replica1(ReplicaManager replicaManager) {
         this.replicaManager = replicaManager;
@@ -35,13 +41,17 @@ public class Replica1 implements Replica {
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
-        responderClient = new ResponderClient(responderClientID);
-        coordinatorClient = new CoordinatorClient(coordinatorClientID);
+//        responderClient = new ResponderClient(responderClientID);
+//        coordinatorClient = new CoordinatorClient(coordinatorClientID);
         try {
             this.log = DermsLogger.getLogger(getClass());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        portsMap = new ConcurrentHashMap<>();
+        portsMap.put("MTL", r.nextInt(60000-8000) + 8000);
+        portsMap.put("QUE", r.nextInt(60000-8000) + 8000);
+        portsMap.put("SHE", r.nextInt(60000-8000) + 8000);
     }
 
     @Override
@@ -52,20 +62,26 @@ public class Replica1 implements Replica {
     @Override
     public void startProcess() {
         try {
-            server = new DERMSServer("MTL");
+            server = new DERMSServer("MTL", portsMap);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
         try {
-            new DERMSServer("SHE");
+            new DERMSServer("SHE", portsMap);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
         try {
-            new DERMSServer("QUE");
+            new DERMSServer("QUE", portsMap);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+//        try {
+//            Endpoint.publish("http://localhost:8387/ws/derms", new DERMSServer("MTL"));
+//            Endpoint.publish("http://localhost:8081/ws/derms", new DERMSServer("QUE"));
+//            Endpoint.publish("http://localhost:8082/ws/derms", new DERMSServer("SHE"));
+//        } catch (InterruptedException e) {}
+
         alive = true;
         log.info(getClass().getSimpleName() + " started.");
         log.config("Local address is "+localAddr.toString());

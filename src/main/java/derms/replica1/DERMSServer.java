@@ -23,11 +23,7 @@ public class DERMSServer implements DERMSInterface {
     private static List<String> cities = Arrays.asList("MTL", "QUE", "SHE");
     private static List<String> resourceNames = Arrays.asList("AMBULANCE", "FIRETRUCK", "PERSONNEL");
     private final Random r = new Random();
-    private final Map<String, Integer> portsMap = new HashMap<String, Integer>() {{
-        put("MTL", r.nextInt(60000-8000) + 8000);
-        put("QUE", r.nextInt(60000-8000) + 8000);
-        put("SHE", r.nextInt(60000-8000) + 8000);
-    }};
+    private ConcurrentHashMap<String, Integer> portsMap = null;
 
     public DERMSServer() {
         // Default constructor to support JAX-WS
@@ -35,11 +31,20 @@ public class DERMSServer implements DERMSInterface {
 //        this.serverID = "MTL";
 //        resources = new HashMap<>();
 //        new Thread(this::listenForMessages).start();
+//        portsMap = new ConcurrentHashMap<>();
+//        portsMap.put("MTL", r.nextInt(60000-8000) + 8000);
+//        portsMap.put("QUE", r.nextInt(60000-8000) + 8000);
+//        portsMap.put("SHE", r.nextInt(60000-8000) + 8000);
     }
 
-    public DERMSServer(String serverID) throws InterruptedException {
+    public DERMSServer(String serverID, ConcurrentHashMap<String, Integer> m) throws InterruptedException {
         this.serverID = serverID;
         resources = new HashMap<>();
+//        portsMap = new ConcurrentHashMap<>();
+//        portsMap.put("MTL", r.nextInt(60000-8000) + 8000);
+//        portsMap.put("QUE", r.nextInt(60000-8000) + 8000);
+//        portsMap.put("SHE", r.nextInt(60000-8000) + 8000);
+        portsMap = m;
         new Thread(this::listenForMessages).start();
         Thread.sleep(10);
     }
@@ -48,6 +53,7 @@ public class DERMSServer implements DERMSInterface {
         try (DatagramSocket socket = new DatagramSocket(getServerPortsFromCentralRepo().get(serverID))) {
             this.serverPort.set(socket.getLocalPort());
             byte[] buffer = new byte[1024];
+            System.out.println("Listening on port: " + socket.getLocalPort());
 
             while (true) {
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
@@ -94,6 +100,7 @@ public class DERMSServer implements DERMSInterface {
 
         byte[] buffer = message.getBytes();
         DatagramPacket request = new DatagramPacket(buffer, buffer.length, address, port);
+        System.out.println("Sending message: " + message + " to " + host + ":" + port);
 
         socket.send(request);
 
@@ -195,7 +202,7 @@ public class DERMSServer implements DERMSInterface {
         for (Map.Entry<String, Integer> server : serverNames.entrySet()) {
             callables.add(() -> Arrays.asList(sendMessage(String.format("LIST_RESOURCE_AVAILABILITY %s", resourceName), "localhost", server.getValue()).split(",")));
         }
-        ExecutorService executor = Executors.newFixedThreadPool(5);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
         List<Future<List<String>>> results;
         try {
             results = executor.invokeAll(callables);
