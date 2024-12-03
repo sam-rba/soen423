@@ -10,7 +10,7 @@ public class DERMSServerPublisher {
         try {
             endpoints[0] = Endpoint.publish("http://localhost:8387/ws/derms", new DERMSServer("MTL"));
             endpoints[1] = Endpoint.publish("http://localhost:8081/ws/derms", new DERMSServer("QUE"));
-            endpoints[3] = Endpoint.publish("http://localhost:8082/ws/derms", new DERMSServer("SHE"));
+            endpoints[2] = Endpoint.publish("http://localhost:8082/ws/derms", new DERMSServer("SHE"));
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
