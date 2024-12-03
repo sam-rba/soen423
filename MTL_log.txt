@@ -1,0 +1,7 @@
+2024-12-03T08:07:04.053 - listResourceAvailability - ambulance - []
+2024-12-03T08:07:44.514 - listResourceAvailability - ambulance - []
+2024-12-03T08:36:28.057 - listResourceAvailability - ambulance - []
+2024-12-03T08:36:42.466 - listResourceAvailability - ambulance - []
+2024-12-03T08:37:05.489 - listResourceAvailability - ambulance - []
+2024-12-03T08:57:57.627 - addResource - MTL1233 - ambulance - 10 - Invalid resource type.
+2024-12-03T08:58:39.878 - addResource - MTL1223 - AMBULANCE - 10 - derms.Resource added successfully.

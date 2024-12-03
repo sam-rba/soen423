@@ -25,6 +25,7 @@ public class Replica1 implements Replica {
     private final String responderClientID = "MTL";
     private final String coordinatorClientID = "MTLC1111";
     private final ReplicaManager replicaManager;
+    private DERMSServer server;
 
     public Replica1(ReplicaManager replicaManager) {
         this.replicaManager = replicaManager;
@@ -50,7 +51,21 @@ public class Replica1 implements Replica {
 
     @Override
     public void startProcess() {
-        pool.execute(DERMSServer::new);
+        try {
+            server = new DERMSServer("MTL");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            new DERMSServer("SHE");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            new DERMSServer("QUE");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         alive = true;
         log.info(getClass().getSimpleName() + " started.");
         log.config("Local address is "+localAddr.toString());
@@ -61,28 +76,30 @@ public class Replica1 implements Replica {
         log.info(request.toString());
 
         String status = "";
+        boolean isSuccess = true;
         try {
             switch (request.getFunction()) {
                 case "addResource":
-                    status = responderClient.addResource(request.getResourceID(), request.getResourceType(), request.getDuration());
+                    status = server.addResource(request.getResourceID(), request.getResourceType(), request.getDuration());
                     break;
                 case "removeResource":
-                    status = responderClient.removeResource(request.getResourceID(), request.getDuration());
+                    status = server.removeResource(request.getResourceID(), request.getDuration());
                     break;
                 case "listResourceAvailability":
-                    status = String.join(",", responderClient.listResourceAvailability(request.getResourceType()));
+//                    status = String.join(",", responderClient.listResourceAvailability(request.getResourceType()));
+                   status = String.join(",", server.listResourceAvailability(request.getResourceType()));
                     break;
                 case "requestResource":
-                    status = coordinatorClient.requestResource(coordinatorClientID, request.getResourceID(), request.getDuration());
+                    status = server.requestResource(coordinatorClientID, request.getResourceID(), request.getDuration());
                     break;
                 case "findResource":
-                    status = String.join(",", coordinatorClient.findResource(coordinatorClientID, request.getResourceType()));
+                    status = String.join(",", server.findResource(coordinatorClientID, request.getResourceType()));
                     break;
                 case "returnResource":
-                    status = coordinatorClient.returnResource(coordinatorClientID, request.getResourceID());
+                    status = server.returnResource(coordinatorClientID, request.getResourceID());
                     break;
                 case "swapResource":
-                    status = coordinatorClient.swapResource(coordinatorClientID, request.getOldResourceID(), request.getOldResourceType(), request.getResourceID(), request.getResourceType());
+                    status = server.swapResource(coordinatorClientID, request.getOldResourceID(), request.getOldResourceType(), request.getResourceID(), request.getResourceType());
                     break;
                 default:
                     status = "Failure: unknown function '" + request.getFunction() + "'";
@@ -90,9 +107,10 @@ public class Replica1 implements Replica {
         } catch (Exception e) {
             log.warning(e.getMessage());
             status = "Failure: " + request.getFunction() + ": " + e.getMessage();
+            isSuccess = false;
         }
 
-        Response response = new Response(request, replicaManager.getReplicaId(), status, false); // TODO: isSuccess flag
+        Response response = new Response(request, replicaManager.getReplicaId(), status, isSuccess); // TODO: isSuccess flag
         log.info("Processed request " + request + "; response: " + response);
         replicaManager.sendResponseToFE(response);
     }
