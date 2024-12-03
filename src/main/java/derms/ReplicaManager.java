@@ -21,7 +21,7 @@ import java.io.ObjectInputStream;
 import java.util.logging.Logger;
 
 public class ReplicaManager {
-    public static final String usage = "Usage: java ReplicaManager <replicaId> <city> <frontEndIP>";
+    public static final String usage = "Usage: java ReplicaManager <replicaId> <city> <frontEndIP> <byzantine(0 or 1)> <crash(0 or 1)>";
     private final int replicaId;
     private final String city;
     private Replica replica;
@@ -31,12 +31,12 @@ public class ReplicaManager {
     private ReliableUnicastSender<Response> unicastSender;
     private TotalOrderMulticastReceiver multicastReceiver;
 
-    public ReplicaManager(int replicaId, String city, InetAddress frontEndIP) throws IOException {
+    public ReplicaManager(int replicaId, String city, InetAddress frontEndIP, int byzantine, int crash) throws IOException {
         this.replicaId = replicaId;
         this.city = city;
         this.log = Logger.getLogger(getClass().getName());
         initUnicastSender(frontEndIP);
-        initReplica();
+        initReplica(byzantine, crash);
         initMulticastReceiver();
         startHeartbeatThread();
     }
@@ -47,7 +47,7 @@ public class ReplicaManager {
         unicastSender = new ReliableUnicastSender<>(frontEndAddress);
     }
 
-    private void initReplica() throws IOException {
+    private void initReplica(int byzantine, int crash) throws IOException {
         switch (replicaId) {
             case 1:
                 replica = new Replica1(this);
@@ -62,7 +62,7 @@ public class ReplicaManager {
                 replica = new derms.replica2.Replica2(city, this);
                 break;
         }
-        replica.startProcess();
+        replica.startProcess(byzantine, crash);
     }
 
     private void initMulticastReceiver() throws IOException {
@@ -146,7 +146,9 @@ public class ReplicaManager {
             int replicaId = Integer.parseInt(args[0]);
             String city = args[1];
             InetAddress frontEndIP = InetAddress.getByName(args[2]);
-            ReplicaManager replicaManager = new ReplicaManager(replicaId, city, frontEndIP);
+            int byzantine = Integer.parseInt(args[3]);
+            int crash = Integer.parseInt(args[4]);
+            ReplicaManager replicaManager = new ReplicaManager(replicaId, city, frontEndIP, byzantine, crash);
             System.out.println("ReplicaManager " + replicaId + " is running.");
         } catch (IOException e) {
             System.err.println("Failed to start ReplicaManager: " + e.getMessage());

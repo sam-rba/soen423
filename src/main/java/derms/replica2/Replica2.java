@@ -57,7 +57,7 @@ public class Replica2 implements Replica {
 	public boolean isAlive() { return alive; }
 
 	@Override
-	public void startProcess() {
+	public void startProcess(int byzantine, int crash) {
 		try {
 			pool.execute(new ResourceAvailability.Server(localAddr, resources));
 		} catch (IOException e) {
@@ -153,7 +153,7 @@ public class Replica2 implements Replica {
 	@Override
 	public void restart() {
 		shutdown();
-		startProcess();
+		startProcess(0, 0);
 	}
 
 	@Override

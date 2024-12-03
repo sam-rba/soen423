@@ -45,7 +45,7 @@ public class Replica1 implements Replica {
     }
 
     @Override
-    public void startProcess() {
+    public void startProcess(int byzantine, int crash) {
         pool.execute(DERMSServer::new);
         alive = true;
         log.info(getClass().getSimpleName() + " started.");
@@ -70,7 +70,7 @@ public class Replica1 implements Replica {
         ThreadPool.shutdown(pool, log);
         alive = false;
         log.info("Finished shutting down.");
-        startProcess();
+        startProcess(0, 0);
     }
 
     @Override

@@ -52,7 +52,7 @@ public class Replica3 implements Replica{
     public boolean isAlive() { return alive; }
 
     @Override
-    public void startProcess() {
+    public void startProcess(int byzantine, int crash) {
         // TODO
 //        log.info(getClass().getSimpleName() + " started.");
         System.out.println("process started");
@@ -104,7 +104,7 @@ public class Replica3 implements Replica{
     public void restart() {
         // TODO
         shutdown();
-        startProcess();
+        startProcess(0, 0);
     }
 
     @Override
