@@ -396,7 +396,7 @@ public class Replica4 implements Replica {
             if (duration > resource.getDuration()) {
                 resource.setDuration(duration);
                 log("Updated duration of resource " + resourceID);
-                return "Resource " + resourceID + " duration updated.";
+                return "Successfully added " + resourceID + duration;
             } else {
                 log("Resource " + resourceID + " already exists with greater or equal duration.");
                 return "Resource " + resourceID + " already exists with greater or equal duration.";
@@ -405,7 +405,7 @@ public class Replica4 implements Replica {
             resource = new Resource(resourceName, duration);
             resources.put(resourceID, resource);
             log("Added new resource " + resourceID);
-            return "Resource " + resourceID + " added successfully.";
+            return "Successfully added " + resourceID + duration;
         }
     }
 
