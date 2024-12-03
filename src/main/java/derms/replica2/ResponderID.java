@@ -1,5 +1,7 @@
 package derms.replica2;
 
+import derms.City;
+
 class ResponderID {
 	City city;
 	short num;

@@ -2,6 +2,8 @@ package derms.replica3;
 
 //import logger.Logger;
 
+import derms.City;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

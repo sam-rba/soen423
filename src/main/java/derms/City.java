@@ -1,13 +1,13 @@
-package derms.replica3;
+package derms;
 
 import java.io.Serializable;
 
 public class City implements Serializable {
-	static final int codeLen = 3;
+	public static final int codeLen = 3;
 
 	private String code;
 
-	City(String code) throws IllegalArgumentException {
+	public City(String code) throws IllegalArgumentException {
 		if (code.length() != codeLen)
 			throw new IllegalArgumentException("Invalid city: "+code+"; must be "+codeLen+" letters");
 		this.code = code;
@@ -16,9 +16,9 @@ public class City implements Serializable {
 	public City() {
 		this("XXX");
 	}
-	public String getCode(){
-		return code;
-	}
+
+	public String getCode() { return code; }
+
 	@Override
 	public String toString() {
 		return code;

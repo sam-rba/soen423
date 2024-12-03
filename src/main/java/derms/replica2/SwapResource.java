@@ -1,5 +1,7 @@
 package derms.replica2;
 
+import derms.City;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.*;

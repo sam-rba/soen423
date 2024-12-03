@@ -1,5 +1,7 @@
 package derms.replica2;
 
+import derms.City;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.time.Duration;

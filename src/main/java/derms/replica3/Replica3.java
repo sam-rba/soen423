@@ -1,9 +1,6 @@
 package derms.replica3;
 
-import derms.Replica;
-import derms.ReplicaManager;
-import derms.Request;
-import derms.Response;
+import derms.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;

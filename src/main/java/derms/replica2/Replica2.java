@@ -1,9 +1,6 @@
 package derms.replica2;
 
-import derms.Replica;
-import derms.ReplicaManager;
-import derms.Request;
-import derms.Response;
+import derms.*;
 import derms.util.ThreadPool;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
