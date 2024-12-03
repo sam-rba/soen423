@@ -116,6 +116,7 @@ public class Replica3 implements Replica{
 
     public synchronized String addResource(String resourceID, String resourceName, int duration) {
         // Check if the resource name already exists
+        Resource res = new Resource(resourceID, resourceName, duration);
         String message = "";
 //        boolean isIdValid = ValidationService.isResourceIDValid(resourceID);
 //        boolean isNameValid = ValidationService.isResourceNameValid(resourceName);
@@ -143,7 +144,8 @@ public class Replica3 implements Replica{
             // Add the new resource
             resource = new Resource(resourceID, resourceName, duration);
             resourceMap.put(resourceID, resource);
-            message = "New Resource of " + resourceName  +" is added: " + resourceID + " : " + resourceName + "  : " + duration;
+//            message = "New Resource of " + resourceName  +" is added: " + resourceID + " : " + resourceName + "  : " + duration;
+            message = "Successfully added resource " + res;
         }
 
 //        if(resourceWaitingQueues.containsKey(resourceID)) {
@@ -188,12 +190,14 @@ public class Replica3 implements Replica{
             if (resource != null) {
                 if (duration >= resource.getDuration()) {
                     resourceMap.remove(resourceID);  // Remove if duration is fully used
-                    message = "Resource of ID: " + resourceID + " with duration " + resource.getDuration() + " is successfully removed.";
+//                    message = "Resource of ID: " + resourceID + " with duration " + resource.getDuration() + " is successfully removed.";
+                    message = "Successfully removed resource " + resourceID;
                     activityLogger.log(" REMOVE RESOURCE (" + resourceID + ", " + duration + ") " , " COMPLETED ", message);
                     return message;
                 } else {
                     resource.setDuration(resource.getDuration() - duration);  // Reduce the duration
-                    message = "Duration of the Resource of ID: " + resourceID + " with duration " + duration + " is successfully reduced.";
+//                    message = "Duration of the Resource of ID: " + resourceID + " with duration " + duration + " is successfully reduced.";
+                    message = "Successfully removed resource " + resourceID;
                     activityLogger.log(" REMOVE RESOURCE (" + resourceID + ", " + duration + ") " , " COMPLETED ", message);
                     return message;
                 }
@@ -322,8 +326,8 @@ public class Replica3 implements Replica{
                     coordinatorResources.put(coordinatorID, lst);
                     System.out.println(coordinatorResources.keySet());
                 }
-                message = "Coordinator of ID " + coordinatorID + " borrowed resource of ID " + resourceID + " " + "from same server";
-
+//                message = "Coordinator of ID " + coordinatorID + " borrowed resource of ID " + resourceID + " " + "from same server";
+                message = "Successfully borrowed " + resourceID;
                 activityLogger.log(" REQUEST RESOURCE (" + coordinatorID + ", " + resourceID + ", " + duration + ") " , " COMPLETED ", message);
                 return message;
             } else if (resource != null) {
@@ -389,7 +393,8 @@ public class Replica3 implements Replica{
         }
 
         activityLogger.log(" REQUEST RESOURCE (" + coordinatorID + ", " + resourceID + ", " + duration + ") " , " COMPLETED ", message);
-        return result.toString();
+        message = "Successfully borrowed " + resourceID;
+        return message;
 
     }
 
@@ -542,7 +547,8 @@ public class Replica3 implements Replica{
         if(coordinatorResources.containsKey(coordinatorID)) {
             for(Resource res: coordinatorResources.get(coordinatorID)) {
                 if(res.getResourceID().equalsIgnoreCase(resourceID)) {
-                    message = "Resource " + resourceID + "-" + res.getDuration() + " returned successfully to coordinator " + coordinatorID;
+//                    message = "Resource " + resourceID + "-" + res.getDuration() + " returned successfully to coordinator " + coordinatorID;
+                    message = "Successfully returned resource " + resourceID;
                     activityLogger.log(" RETURN RESOURCE (" + coordinatorID + ", " + resourceID +  ") " , " COMPLETED ", message);
                     return message;
                 }
@@ -580,7 +586,8 @@ public class Replica3 implements Replica{
             activityLogger.log(" SWAP RESOURCE (" + coordinatorID + ", " + oldResourceID +  ") " , " FAILED ", message);
             return message;
         }
-        message = "Coordinator of ID: " + coordinatorID + " Successfully swapped old resource " + oldResourceID + " with new resource " + newResourceID;
+//        message = "Coordinator of ID: " + coordinatorID + " Successfully swapped old resource " + oldResourceID + " with new resource " + newResourceID;
+        message = "Successfully swapped " + oldResourceID + " for " + newResourceID;
 //        activityLogger.log(" SWAP RESOURCE (" + coordinatorID + ", " + oldResourceID + ", " + oldResourceType + ", " + newResourceID + ", " + newResourceType + ", "+ ") ",
 //                " COMPLETED ", message);
 
