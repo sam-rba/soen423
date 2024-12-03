@@ -62,7 +62,7 @@ public class Replica1 implements Replica {
         }
 
         pool.execute(DERMSServer::new);
-        alive = true;
+        //alive = true;
         log.info(getClass().getSimpleName() + " started.");
         log.config("Local address is "+localAddr.toString());
     }

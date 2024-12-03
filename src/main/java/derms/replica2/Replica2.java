@@ -120,7 +120,7 @@ public class Replica2 implements Replica {
 
 		log.info("Running");
 		log.config("Local address is "+localAddr.toString());
-		alive = true;
+		//alive = true;
 		log.info(getClass().getSimpleName() + " started.");
 	}
 

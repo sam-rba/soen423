@@ -10,6 +10,7 @@ import derms.net.runicast.ReliableUnicastSender;
 import derms.net.tomulticast.TotalOrderMulticastSender;
 import derms.replica1.Replica1;
 import derms.replica2.Replica2;
+import derms.util.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -62,6 +63,20 @@ public class ReplicaManager {
                 replica = new derms.replica2.Replica2(city, this);
                 break;
         }
+
+        // [TEST] Logging
+        if (byzantine == 0) {
+            TestLogger.log("REPLICA " + replicaId + ": {BYZANTINE: FALSE}");
+        } else {
+            TestLogger.log("REPLICA " + replicaId + ": {BYZANTINE: TRUE}");
+        }
+
+        if (crash == 0) {
+            TestLogger.log("REPLICA " + replicaId + ": {CRASH: FALSE}");
+        } else {
+            TestLogger.log("REPLICA " + replicaId + ": {CRASH: TRUE}");
+        }
+
         replica.startProcess(byzantine, crash);
     }
 
@@ -92,8 +107,12 @@ public class ReplicaManager {
         new Thread(() -> {
             while (true) {
                 if (!replica.isAlive()) {
+                    // [TEST] Logging
+                    TestLogger.log("REPLICA " + replicaId + ": {CRASH: DETECTED}");
+
                     informFrontEndRmIsDown(replica.getId());
                     replica.restart();
+                    TestLogger.log("REPLICA " + replicaId + ": {RESTARTED}");
                 }
                 try {
                     Thread.sleep(5000); // Example 5 seconds.
@@ -114,8 +133,13 @@ public class ReplicaManager {
 
     public void handleByzantineFailure() {
         log.severe("Byzantine failure detected in Replica " + replica.getId());
+
+        // [TEST] Logging
+        TestLogger.log("REPLICA " + replicaId + ": {BYZANTINE: DETECTED}");
+
         replica.restart();
         informFrontEndRmHasBug(replica.getId());
+        TestLogger.log("REPLICA " + replicaId + ": {RESTARTED}");
     }
 
     private void informFrontEndRmIsDown(int replicaId) {

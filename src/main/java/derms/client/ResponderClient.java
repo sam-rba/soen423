@@ -9,7 +9,7 @@ public class ResponderClient extends CLI {
 
     private final DERMSInterface server;
 
-    private ResponderClient(String FEhost) throws MalformedURLException {
+    public ResponderClient(String FEhost) throws MalformedURLException {
         server = Client.connectToServer(FEhost);
 
         commands.put("add", new Add());
@@ -43,7 +43,7 @@ public class ResponderClient extends CLI {
         }
     }
 
-    private class Add implements Command {
+    public class Add implements Command {
         @Override
         public void exec(String[] args) {
             if (args.length < 3)
@@ -52,7 +52,7 @@ public class ResponderClient extends CLI {
                 add(args[0], args[1], args[2]);
         }
 
-        private void add(String resourceID, String resourceName, String durationStr) {
+        public void add(String resourceID, String resourceName, String durationStr) {
             try {
                 int duration = Integer.parseInt(durationStr);
                 if (duration < 0) {

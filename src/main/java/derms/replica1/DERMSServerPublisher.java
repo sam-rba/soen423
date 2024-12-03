@@ -2,15 +2,22 @@ package derms.replica1;
 
 import javax.xml.ws.Endpoint;
 
+import derms.frontend.DERMSServerImpl;
+
 public class DERMSServerPublisher {
+
+    private static Endpoint endpoint;
+
     public static void main(String[] args) {
-        try {
-            Endpoint.publish("http://localhost:8387/ws/derms", new DERMSServer("MTL"));
-//            Endpoint.publish("http://localhost:8081/ws/derms", new DERMSServer("QUE"));
-//            Endpoint.publish("http://localhost:8082/ws/derms", new DERMSServer("SHE"));
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        // Publish the web service
+        endpoint = Endpoint.publish("http://127.0.0.1:8387/ws/derms", new DERMSServerImpl());
+        System.out.println("DERMS Server is published at http://127.0.0.1:8387/ws/derms");
+    }
+
+    public static void stop() {
+        if (endpoint != null && endpoint.isPublished()) {
+            endpoint.stop();
+            System.out.println("DERMS Server is stopped.");
         }
-        System.out.println("DERMS Web Service is published at http://localhost:8387/ws/derms");
     }
 }
