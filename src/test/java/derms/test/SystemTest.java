@@ -72,12 +72,15 @@ class SystemTest {
     void testNormal() throws IOException {
         // Replica 1
         String[] argsRM = {"1", "MTL", IP, IP, "0", "0"};
+        String[] argsRM2 = {"2", "MTL", IP, IP, "0", "0"};
 
         // [TODO]
         // Run the main function of the desired replica, for example:
         DERMSServerPublisher.main(new String[0]);
 
         ReplicaManager.main(argsRM);
+        ReplicaManager.main(argsRM2);
+
         ResponderClient responderClient = new ResponderClient(IP);
         responderClient.addResource("MTL1001", "ambulance", 10);
 
@@ -92,12 +95,15 @@ class SystemTest {
     void testByzantine() throws IOException {
         // Replica 1
         String[] argsRM = {"1", "MTL", IP, IP, "1", "0"};
+        String[] argsRM2 = {"2", "MTL", IP, IP, "0", "0"};
 
         // [TODO]
         // Run the main function of the desired replica, for example:
         DERMSServerPublisher.main(new String[0]);
 
         ReplicaManager.main(argsRM);
+        ReplicaManager.main(argsRM2);
+
         ResponderClient responderClient = new ResponderClient(IP);
         responderClient.addResource("MTL1001", "ambulance", 10);
 
@@ -111,13 +117,16 @@ class SystemTest {
     @Test
     void testCrash() throws IOException {
         // Replica 1
-        String[] argsRM = {"1", "MTL", IP, IP, "0", "1"};
+        String[] argsRM1 = {"1", "MTL", IP, IP, "0", "1"};
+        String[] argsRM2 = {"2", "MTL", IP, IP, "0", "0"};
 
         // [TODO]
         // Run the main function of the desired replica, for example:
         DERMSServerPublisher.main(new String[0]);
 
-        ReplicaManager.main(argsRM);
+        ReplicaManager.main(argsRM1);
+        ReplicaManager.main(argsRM2);
+
         ResponderClient responderClient = new ResponderClient(IP);
         responderClient.addResource("MTL1001", "ambulance", 10);
 
@@ -133,6 +142,7 @@ class SystemTest {
         // Replica 1 and 2
         String[] argsRM1 = {"1", "MTL", IP, IP, "1", "0"};
         String[] argsRM3 = {"3", "MTL", IP, IP, "0", "1"};
+        String[] argsRM2 = {"2", "MTL", IP, IP, "0", "0"};
 
         // [TODO]
         // Run the main function of the desired TWO replicas, for example:
@@ -143,6 +153,7 @@ class SystemTest {
 
         ReplicaManager.main(argsRM1);
         ReplicaManager.main(argsRM3);
+        ReplicaManager.main(argsRM2);
 
         Thread thread1 = new Thread(() -> {
             ResponderClient responderClient = null;
