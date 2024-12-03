@@ -9,3 +9,4 @@
 javadoc
 target
 .DS_Store
+.vscode
