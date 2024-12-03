@@ -70,7 +70,7 @@ class SystemTest {
     @Test
     void testNormal() throws IOException {
         // Replica 1
-        String[] argsRM = {"1", "MTL", IP, "0", "0"};
+        String[] argsRM = {"1", "MTL", IP, IP, "0", "0"};
 
         // [TODO]
         // Run the main function of the desired replica, for example:
