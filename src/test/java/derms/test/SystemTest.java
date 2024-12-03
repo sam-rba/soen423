@@ -87,7 +87,7 @@ class SystemTest {
     @Test
     void testByzantine() throws IOException {
         // Replica 1
-        String[] argsRM = {"1", "MTL", IP, "1", "0"};
+        String[] argsRM = {"1", "MTL", IP, IP, "1", "0"};
 
         // [TODO]
         // Run the main function of the desired replica, for example:
@@ -104,7 +104,7 @@ class SystemTest {
     @Test
     void testCrash() throws IOException {
         // Replica 1
-        String[] argsRM = {"1", "MTL", IP, "0", "1"};
+        String[] argsRM = {"1", "MTL", IP, IP, "0", "1"};
 
         // [TODO]
         // Run the main function of the desired replica, for example:
@@ -121,8 +121,8 @@ class SystemTest {
     @Test
     void testCombined() throws IOException {
         // Replica 1 and 2
-        String[] argsRM1 = {"1", "MTL", IP, "1", "0"};
-        String[] argsRM3 = {"3", "MTL", IP, "0", "1"};
+        String[] argsRM1 = {"1", "MTL", IP, IP, "1", "0"};
+        String[] argsRM3 = {"3", "MTL", IP, IP, "0", "1"};
 
         // [TODO]
         // Run the main function of the desired TWO replicas, for example:
