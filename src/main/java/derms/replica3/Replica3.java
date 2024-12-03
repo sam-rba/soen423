@@ -174,7 +174,7 @@ public class Replica3 implements Replica{
             resource = new Resource(resourceID, resourceName, duration);
             resourceMap.put(resourceID, resource);
 //            message = "New Resource of " + resourceName  +" is added: " + resourceID + " : " + resourceName + "  : " + duration;
-            message = "Successfully added resource " + res.getResourceID() + res.getDuration();
+            message = "Successfully added resource " + res.getResourceID() + " " + res.getDuration();
         }
 
 //        if(resourceWaitingQueues.containsKey(resourceID)) {

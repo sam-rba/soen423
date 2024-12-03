@@ -133,7 +133,7 @@ public class DERMSServer implements DERMSInterface {
                 }
             } else {
                 resources.put(resourceID, new Resource(resourceID, resourceName, duration));
-                response = "derms.Resource added successfully.";
+                response = "Successfully added resource " + resourceID + " " + duration;
                 success = true;
             }
         } else {
