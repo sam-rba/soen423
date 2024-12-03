@@ -5,6 +5,7 @@ import derms.ReplicaManager;
 import derms.Request;
 import derms.Response;
 import derms.replica2.DermsLogger;
+import derms.util.TestLogger;
 import derms.util.ThreadPool;
 
 import java.io.IOException;
@@ -94,6 +95,7 @@ public class Replica1 implements Replica {
         log.info("Finished shutting down.");
 
         // [TEST] Restart process without byzantine failure or crash
+        TestLogger.log("REPLICA 1: {RESTARTED}");
         startProcess(0, 0);
     }
 

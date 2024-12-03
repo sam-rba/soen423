@@ -1,6 +1,7 @@
 package derms.replica2;
 
 import derms.*;
+import derms.util.TestLogger;
 import derms.util.ThreadPool;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -177,6 +178,7 @@ public class Replica2 implements Replica {
 		shutdown();
 
 		// [TEST] Restart process without byzantine failure or crash
+		TestLogger.log("REPLICA 2: {RESTARTED}");
 		startProcess(0, 0);
 	}
 

@@ -1,8 +1,10 @@
 package derms.client;
 
 import derms.frontend.DERMSInterface;
+import derms.util.TestLogger;
 
 import java.net.MalformedURLException;
+import java.util.Objects;
 
 public class ResponderClient extends CLI {
     public static final String usage = "Usage: java derms.client.ResponderClient <FE host>";
@@ -60,6 +62,11 @@ public class ResponderClient extends CLI {
                 }
                 String response = server.addResource(resourceID, resourceName, duration);
                 System.out.println(response);
+                if (response.contains("Fail")) {
+                    TestLogger.log("[FAILED: " + response + "]");
+                } else {
+                    TestLogger.log("[SUCCESS: " + response + "]");
+                }
             } catch (NumberFormatException e) {
                 System.out.println("invalid duration: " + durationStr);
             }

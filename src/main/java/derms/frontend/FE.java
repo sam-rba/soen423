@@ -52,7 +52,7 @@ public class FE {
                     System.out.println("Rm:" + RmNumber + "has bug");
 //                    sendMulticastFaultMessageToRms(errorMessage);
                     sendUnicastToSequencer(errorMessage);
-                    TestLogger.log("FE: {BYZANTINE: REPLICA" + RmNumber + "}");
+                    //TestLogger.log("FE: {BYZANTINE: INFORM REPLICA" + RmNumber + "}");
                 }
 
                 @Override
@@ -62,7 +62,7 @@ public class FE {
                     System.out.println("Rm:" + RmNumber + "is down");
 //                    sendMulticastFaultMessageToRms(errorMessage);
                     sendUnicastToSequencer(errorMessage);
-                    TestLogger.log("FE: {CRASH: REPLICA" + RmNumber + "}");
+                    //TestLogger.log("FE: {CRASH: INFORM REPLICA" + RmNumber + "}");
                 }
 
                 @Override

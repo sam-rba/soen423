@@ -13,6 +13,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import derms.replica3.Logger;
+import derms.util.TestLogger;
 
 public class Replica3 implements Replica{
     static final InetSocketAddress announceGroup = new InetSocketAddress("225.5.5.5", 5555);
@@ -130,6 +131,7 @@ public class Replica3 implements Replica{
         shutdown();
 
         // [TEST] Restart process without byzantine failure or crash
+        TestLogger.log("REPLICA 3: {RESTARTED}");
         startProcess(0, 0);
     }
 

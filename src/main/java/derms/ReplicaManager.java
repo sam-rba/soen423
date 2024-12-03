@@ -112,7 +112,7 @@ public class ReplicaManager {
 
                     informFrontEndRmIsDown(replica.getId());
                     replica.restart();
-                    TestLogger.log("REPLICA " + replicaId + ": {RESTARTED}");
+                    //TestLogger.log("REPLICA " + replicaId + ": {RESTARTED}");
                 }
                 try {
                     Thread.sleep(5000); // Example 5 seconds.
@@ -139,7 +139,7 @@ public class ReplicaManager {
 
         replica.restart();
         informFrontEndRmHasBug(replica.getId());
-        TestLogger.log("REPLICA " + replicaId + ": {RESTARTED}");
+        //TestLogger.log("REPLICA " + replicaId + ": {RESTARTED}");
     }
 
     private void informFrontEndRmIsDown(int replicaId) {
@@ -148,6 +148,7 @@ public class ReplicaManager {
             out.writeObject("RM_DOWN:" + replicaId);
         } catch (IOException e) {
             log.severe("Failed to inform FE that RM is down: " + e.getMessage());
+            TestLogger.log("[FAILED TO INFORM FE (RM IS DOWN)]");
         }
     }
 
@@ -157,6 +158,7 @@ public class ReplicaManager {
             out.writeObject("RM_BUG:" + replicaId);
         } catch (IOException e) {
             log.severe("Failed to inform FE that RM has a bug: " + e.getMessage());
+            TestLogger.log("[FAILED TO INFORM FE (RM HAS A BUG)]");
         }
     }
 
@@ -176,6 +178,7 @@ public class ReplicaManager {
             System.out.println("ReplicaManager " + replicaId + " is running.");
         } catch (IOException e) {
             System.err.println("Failed to start ReplicaManager: " + e.getMessage());
+            TestLogger.log("[FAILED TO START RM]");
             e.printStackTrace();
         }
     }
