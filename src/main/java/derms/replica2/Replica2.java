@@ -194,9 +194,8 @@ public class Replica2 implements Replica {
 					ResourceType.parse(request.getResourceType()));
 			StringBuilder result = new StringBuilder();
 			result.append(request.getResourceType());
-			for (Resource resource : resources) {
+			for (Resource resource : resources)
 				result.append(" " + resource.id + "-" + resource.duration);
-			}
 			return result.toString();
 		} catch (ServerCommunicationError e) {
 			String msg = "Error listing resources: " + e.getMessage();
@@ -220,8 +219,24 @@ public class Replica2 implements Replica {
     }
 
 	private String findResource(Request request) {
-		// TODO
-		throw new NotImplementedException();
+		try {
+			Resource[] resources = coordinatorServer.findResource(
+					CoordinatorID.parse(request.getClientID()),
+					ResourceType.parse(request.getResourceType()));
+
+			if (resources.length < 1)
+				return "Resources of " + request.getResourceType() + " occupied by coordinator " + request.getClientID() + " are not found!";
+
+			StringBuilder result = new StringBuilder();
+			result.append(request.getResourceType());
+			for (Resource resource : resources)
+				result.append(" " + resource.id + "-" + resource.borrowDuration);
+			return result.toString();
+		} catch (ServerCommunicationError e) {
+			String msg = "Error finding resources: " + e.getMessage();
+			log.warning(msg);
+			return msg;
+		}
 	}
 
 	private String returnResource(Request request) {
