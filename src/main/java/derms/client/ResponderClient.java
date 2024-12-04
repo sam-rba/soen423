@@ -16,9 +16,9 @@ public class ResponderClient {
     public String addResource(String resourceID, String resourceName, int duration) {
         String res = server.addResource(resourceID, resourceName, duration);
         if (res.contains("Fail")) {
-            TestLogger.log("[FAILED: " + res + "]");
+            TestLogger.log("[RESPONDER FAILED: " + res + "]");
         } else {
-            TestLogger.log("[SUCCESS: " + res + "]");
+            TestLogger.log("[RESPONDER SUCCESS: " + res + "]");
         }
         return res;
     }

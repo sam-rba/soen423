@@ -2,6 +2,7 @@ package derms.test;
 
 import derms.ReplicaManager;
 import derms.Sequencer;
+import derms.client.CoordinatorClient;
 import derms.client.ResponderClient;
 import derms.frontend.FE;
 import derms.replica1.DERMSServerPublisher;
@@ -71,51 +72,69 @@ class SystemTest {
     void testNormal() throws IOException {
         // Replica 1
         String[] argsRM = {"1", "MTL", IP, IP, "0", "0"};
+        String[] argsRM2 = {"2", "MTL", IP, IP, "0", "0"};
 
         // [TODO]
         // Run the main function of the desired replica, for example:
         DERMSServerPublisher.main(new String[0]);
 
         ReplicaManager.main(argsRM);
+        ReplicaManager.main(argsRM2);
+
         ResponderClient responderClient = new ResponderClient(IP);
         responderClient.addResource("MTL1001", "ambulance", 10);
 
+        CoordinatorClient coordinatorClient = new CoordinatorClient("MTLC1001", IP);
+        coordinatorClient.requestResource("MTL1001", 10);
+
         // Compare the number of lines in the log files, to determine if they match or not
-        assertTrue(LogComparator.compareFiles(TEST_LOG_PATH, EXPECTED_LOG_PATH_NORM));
+        assertTrue(LogComparator.containsSuccess(TEST_LOG_PATH));
     }
 
     @Test
     void testByzantine() throws IOException {
         // Replica 1
         String[] argsRM = {"1", "MTL", IP, IP, "1", "0"};
+        String[] argsRM2 = {"2", "MTL", IP, IP, "0", "0"};
 
         // [TODO]
         // Run the main function of the desired replica, for example:
         DERMSServerPublisher.main(new String[0]);
 
         ReplicaManager.main(argsRM);
+        ReplicaManager.main(argsRM2);
+
         ResponderClient responderClient = new ResponderClient(IP);
         responderClient.addResource("MTL1001", "ambulance", 10);
 
+        CoordinatorClient coordinatorClient = new CoordinatorClient("MTLC1001", IP);
+        coordinatorClient.requestResource("MTL1001", 10);
+
         // Compare the number of lines in the log files, to determine if they match or not
-        assertTrue(LogComparator.compareFiles(TEST_LOG_PATH, EXPECTED_LOG_PATH_BYZ));
+        assertTrue(LogComparator.containsByzTrue(TEST_LOG_PATH));
     }
 
     @Test
     void testCrash() throws IOException {
         // Replica 1
-        String[] argsRM = {"1", "MTL", IP, IP, "0", "1"};
+        String[] argsRM1 = {"1", "MTL", IP, IP, "0", "1"};
+        String[] argsRM2 = {"2", "MTL", IP, IP, "0", "0"};
 
         // [TODO]
         // Run the main function of the desired replica, for example:
         DERMSServerPublisher.main(new String[0]);
 
-        ReplicaManager.main(argsRM);
+        ReplicaManager.main(argsRM1);
+        ReplicaManager.main(argsRM2);
+
         ResponderClient responderClient = new ResponderClient(IP);
         responderClient.addResource("MTL1001", "ambulance", 10);
 
+        CoordinatorClient coordinatorClient = new CoordinatorClient("MTLC1001", IP);
+        coordinatorClient.requestResource("MTL1001", 10);
+
         // Compare the number of lines in the log files, to determine if they match or not
-        assertTrue(LogComparator.compareFiles(TEST_LOG_PATH, EXPECTED_LOG_PATH_CRASH));
+        assertTrue(LogComparator.containsCrashTrue(TEST_LOG_PATH));
     }
 
     @Test
@@ -123,6 +142,7 @@ class SystemTest {
         // Replica 1 and 2
         String[] argsRM1 = {"1", "MTL", IP, IP, "1", "0"};
         String[] argsRM3 = {"3", "MTL", IP, IP, "0", "1"};
+        String[] argsRM2 = {"2", "MTL", IP, IP, "0", "0"};
 
         // [TODO]
         // Run the main function of the desired TWO replicas, for example:
@@ -133,6 +153,7 @@ class SystemTest {
 
         ReplicaManager.main(argsRM1);
         ReplicaManager.main(argsRM3);
+        ReplicaManager.main(argsRM2);
 
         Thread thread1 = new Thread(() -> {
             ResponderClient responderClient = null;
@@ -177,7 +198,13 @@ class SystemTest {
             e.printStackTrace();
         }
 
+        CoordinatorClient coordinatorClient = new CoordinatorClient("MTLC1001", IP);
+        coordinatorClient.requestResource("MTL1001", 10);
+
+        CoordinatorClient coordinatorClient2 = new CoordinatorClient("MTLC1002", IP);
+        coordinatorClient2.requestResource("MTL1002", 10);
+
         // Compare the number of lines in the log files, to determine if they match or not
-        assertTrue(LogComparator.compareFiles(TEST_LOG_PATH, EXPECTED_LOG_PATH_COMBINED));
+        assertTrue(LogComparator.containsCombTrue(TEST_LOG_PATH));
     }
 }

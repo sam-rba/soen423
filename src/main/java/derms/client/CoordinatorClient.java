@@ -1,6 +1,7 @@
 package derms.client;
 
 import derms.frontend.DERMSInterface;
+import derms.util.TestLogger;
 
 import java.net.MalformedURLException;
 
@@ -14,7 +15,13 @@ public class CoordinatorClient {
     }
 
     public String requestResource(String resourceID, int duration) {
-        return server.requestResource(coordinatorID, resourceID, duration);
+        String res = server.requestResource(coordinatorID, resourceID, duration);
+        if (res.contains("Fail")) {
+            TestLogger.log("[COORDINATOR FAILED: " + res + "]");
+        } else {
+            TestLogger.log("[COORDINATOR SUCCESS: " + res + "]");
+        }
+        return res;
     }
 
     public String findResource(String resourceName) {
